@@ -1,0 +1,158 @@
+<html>
+	<head>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			body {
+				margin: 0;
+				background: #000;
+				overflow: hidden;
+				font-family: "Roboto", sans-serif;
+			}
+
+			#stream {
+				position: fixed;
+				margin: auto;
+				left: 0;
+				top: 0;
+				right: 0;
+				height: calc(100vh - 48px);
+				width: calc((100vh - 48px) * (16 / 9));
+			}
+
+			#stream:focus {
+				outline: none;
+			}
+
+			.info-bar {
+				position: fixed;
+				margin: auto;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				background: #1d1f21;
+				height: 48px;
+				color: #fff;
+				font-size: 1.2rem;
+				display: flex;
+				align-items: center;
+				padding: 0 16px;
+			}
+
+			.info-bar * {
+				margin: 0;
+			}
+
+			.info-bar button {
+				font-size: 1.2rem;
+				font-family: "Roboto", sans-serif;
+				border: none;
+				background: rgba(255, 255, 255, 0.2);
+				color: #fff;
+				border-radius: 4px;
+				padding: 4px 12px;
+			}
+
+			.info-bar button:disabled {
+				opacity: 0.4;
+			}
+
+			.info-bar button:focus {
+				outline: none;
+			}
+		</style>
+	</head>
+	<body>
+		<video id="stream" tabindex="-1" autoplay></video>
+		<div class="info-bar">
+			<button id="toggle-controls" disabled></button>
+			<p id="users" style="opacity: 0.4; margin-left: 16px"></p>
+		</div>
+		<script src="lib/adapter.min.js"></script>
+		<script src="lib/socket.io.js"></script>
+		<script src="lib/janus.js"></script>
+		<script src="lib/Keyboard.js"></script>
+		<script src="index.js"></script>
+		<script>
+			var _GET = {};
+			window.location.search
+				.substr(1)
+				.split("&")
+				.forEach(function (e, i) {
+					if (e == "") return;
+					let param = e.split("=");
+					let value = param[1];
+					if (value == undefined) value = null;
+					_GET[param[0]] = value;
+				});
+
+			// dynamic lights
+
+			if (_GET.dynamicLights) {
+				const video = document.querySelector("video");
+
+				const canvas = document.createElement("canvas");
+				canvas.width = canvas.height = 30;
+
+				//document.body.appendChild(canvas);
+				//let debug = document.createElement("h2");
+				//document.body.appendChild(debug);
+
+				const ctx = canvas.getContext("2d");
+
+				function getAverageColor(x, y) {
+					let average = [0, 0, 0];
+					let colors = ctx.getImageData(x * 10, y * 10, 10, 10).data;
+
+					for (let i = 0; i < 100; i++) {
+						let index = i * 4;
+						average[0] += colors[index];
+						average[1] += colors[index + 1];
+						average[2] += colors[index + 2];
+					}
+
+					return [
+						Math.floor(average[0] / 100),
+						Math.floor(average[1] / 100),
+						Math.floor(average[2] / 100),
+					];
+				}
+
+				function getColors() {
+					let colors = new Array();
+					[
+						// top
+						getAverageColor(0, 0),
+						getAverageColor(1, 0),
+						getAverageColor(2, 0),
+						// middle
+						getAverageColor(0, 1),
+						getAverageColor(2, 1),
+						// bottom
+						getAverageColor(0, 2),
+						getAverageColor(1, 2),
+						getAverageColor(2, 2),
+					].forEach(c => {
+						colors = colors.concat([c[0], c[1], c[2]]);
+					});
+
+					return colors.join(",");
+				}
+
+				let renderWidth = canvas.width;
+				if (_GET["3D"]) renderWidth = canvas.width * 2;
+
+				setInterval(() => {
+					ctx.drawImage(stream, 0, 0, renderWidth, canvas.height);
+
+					let color = getColors();
+					//debug.textContent = getColors();
+
+					if (window.qt) EventBridge.emitWebEvent(color);
+				}, 1000 / 30);
+			}
+		</script>
+	</body>
+</html>

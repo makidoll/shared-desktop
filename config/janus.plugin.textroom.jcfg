@@ -1,0 +1,5 @@
+tivoli-shared-desktop: {
+	#admin_key = "supersecret" # should generate random
+	json = "compact"
+	string_ids = true
+}

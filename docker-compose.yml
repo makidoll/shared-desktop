@@ -1,0 +1,8 @@
+version: "3.6"
+services:
+    tivoli-shared-desktop:
+        image: tivolicloud/shared-desktop:latest
+        # restart: always
+        ports:
+            - 80:80/tcp
+            - 10000-10200:10000-10200/udp

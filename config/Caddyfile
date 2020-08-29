@@ -1,0 +1,12 @@
+0.0.0.0:80 {
+	# root /etc/tivoli-shared-desktop/app
+    
+    proxy / http://127.0.0.1:3000 {
+        transparent
+        websocket
+    }
+    proxy /janus http://127.0.0.1:8088 {
+        transparent
+        websocket
+    }
+}
