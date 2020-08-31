@@ -39,7 +39,7 @@ module.exports = {
 		{
 			name: "Openbox",
 			script: "su",
-			args: ["tivoli", "-c", "dbus-launch openbox"],
+			args: ["tivoli", "-c", "dbus-launch openbox-session"],
 		},
 		{
 			name: "Google Chrome",

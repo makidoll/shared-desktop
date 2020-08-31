@@ -52,7 +52,13 @@ COPY ./config/janus.plugin.streaming.jcfg /etc/janus
 COPY ./config/ecosystem.config.js /etc/tivoli-shared-desktop/ecosystem.config.js 
 COPY ./config/Caddyfile /etc/tivoli-shared-desktop/Caddyfile 
 COPY ./config/stream.sh /etc/tivoli-shared-desktop/stream.sh
+COPY ./config/tivoli-background.jpg /etc/tivoli-shared-desktop/tivoli-background.jpg
 COPY ./app /etc/tivoli-shared-desktop/app
+
+# set background
+RUN mkdir -p .config/openbox && \
+echo "feh --bg-fill /etc/tivoli-shared-desktop/tivoli-background.jpg" > .config/openbox/autostart && \
+chmod +x .config/openbox/autostart
 
 # add vars
 RUN \
