@@ -103,7 +103,7 @@ class StreamInputController {
 		this.guacamoleKeyboard.onkeydown = null;
 		this.guacamoleKeyboard.onkeyup = null;
 
-		keysDown = {};
+		this.keysDown = {};
 	}
 }
 
