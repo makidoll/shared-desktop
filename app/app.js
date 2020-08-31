@@ -100,6 +100,11 @@ io.on("connection", socket => {
 		clearKeyHeldDown(keysym);
 		xdotool(["keyup", "0x" + keysym.toString(16)]);
 	});
+	// TODO: for basic text clipboard support that should be replaced
+	socket.on("type", text => {
+		if (controlsOwnerSocket != socket) return;
+		xdotool(["type", "--delay", "0", text]);
+	});
 });
 
 const port = 3000;

@@ -7,6 +7,7 @@ class StreamInputController {
 	streamEl = null;
 
 	guacamoleKeyboard = null;
+	keysDown = {};
 
 	active = false;
 
@@ -60,10 +61,28 @@ class StreamInputController {
 		this.streamEl.addEventListener("mouseup", this.mouseup);
 		this.streamEl.addEventListener("wheel", this.wheel);
 
+		navigator.clipboard.readText(); // request permission
+
 		this.guacamoleKeyboard.onkeydown = keysym => {
-			this.socket.emit("keydown", keysym);
+			this.keysDown[keysym] = true;
+
+			if (
+				this.keysDown[65507] && // CTRL
+				keysym == 118 // V
+			) {
+				navigator.clipboard
+					.readText()
+					.then(text => {
+						this.socket.emit("keyup", 65507); // release CTRL first lol
+						this.socket.emit("type", text);
+					})
+					.catch(err => {});
+			} else {
+				this.socket.emit("keydown", keysym);
+			}
 		};
 		this.guacamoleKeyboard.onkeyup = keysym => {
+			delete this.keysDown[keysym];
 			this.socket.emit("keyup", keysym);
 		};
 	}
@@ -83,6 +102,8 @@ class StreamInputController {
 
 		this.guacamoleKeyboard.onkeydown = null;
 		this.guacamoleKeyboard.onkeyup = null;
+
+		keysDown = {};
 	}
 }
 
