@@ -47,7 +47,6 @@ RUN sudo npm i -g pm2
 # copy janus config
 COPY ./config/janus.jcfg /etc/janus
 COPY ./config/janus.plugin.streaming.jcfg /etc/janus
-# COPY ./config/janus.plugin.textroom.jcfg /etc/janus
 
 # copy tivoli shared desktop config
 COPY ./config/ecosystem.config.js /etc/tivoli-shared-desktop/ecosystem.config.js 
