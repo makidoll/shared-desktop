@@ -12,6 +12,10 @@
 				font-family: "Roboto", sans-serif;
 			}
 
+			*:focus {
+				outline: none;
+			}
+
 			#stream {
 				position: fixed;
 				margin: auto;
@@ -20,10 +24,6 @@
 				right: 0;
 				height: calc(100vh - 48px);
 				width: calc((100vh - 48px) * (16 / 9));
-			}
-
-			#stream:focus {
-				outline: none;
 			}
 
 			.info-bar {
@@ -59,8 +59,8 @@
 				opacity: 0.4;
 			}
 
-			.info-bar button:focus {
-				outline: none;
+			#volume-slider {
+				width: 200px;
 			}
 		</style>
 	</head>
@@ -68,6 +68,17 @@
 		<video id="stream" tabindex="-1" autoplay></video>
 		<div class="info-bar">
 			<button id="toggle-controls" disabled></button>
+			<div style="margin-left: 16px" style="opacity: 0.4">
+				<p>Local volume</p>
+				<input
+					type="range"
+					min="0"
+					max="1"
+					step="0.01"
+					value="0"
+					id="volume-slider"
+				/>
+			</div>
 			<p id="users" style="opacity: 0.4; margin-left: 16px"></p>
 		</div>
 		<script src="lib/adapter.min.js"></script>

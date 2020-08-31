@@ -100,10 +100,16 @@ class StreamInputController {
 	// make sure the stream is playing
 
 	const streamEl = document.getElementById("stream");
+	const volumeSliderEl = document.getElementById("volume-slider");
 
 	streamEl.addEventListener("contextmenu", event => {
 		event.preventDefault();
 	});
+
+	volumeSliderEl.addEventListener("input", event => {
+		streamEl.volume = Number(volumeSliderEl.value);
+	});
+	streamEl.volume = volumeSliderEl.value = 0.7; // default volume
 
 	setInterval(() => {
 		if (streamEl.paused) {
