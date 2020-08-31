@@ -62,6 +62,115 @@
 			#volume-slider {
 				width: 200px;
 			}
+
+			@keyframes mat-progress-spinner-stroke-rotate-100 {
+				0% {
+					stroke-dashoffset: 268.606171575px;
+					transform: rotate(0);
+				}
+				12.5% {
+					stroke-dashoffset: 56.5486677px;
+					transform: rotate(0);
+				}
+				12.5001% {
+					stroke-dashoffset: 56.5486677px;
+					transform: rotateX(180deg) rotate(72.5deg);
+				}
+				25% {
+					stroke-dashoffset: 268.606171575px;
+					transform: rotateX(180deg) rotate(72.5deg);
+				}
+				25.0001% {
+					stroke-dashoffset: 268.606171575px;
+					transform: rotate(270deg);
+				}
+				37.5% {
+					stroke-dashoffset: 56.5486677px;
+					transform: rotate(270deg);
+				}
+				37.5001% {
+					stroke-dashoffset: 56.5486677px;
+					transform: rotateX(180deg) rotate(161.5deg);
+				}
+				50% {
+					stroke-dashoffset: 268.606171575px;
+					transform: rotateX(180deg) rotate(161.5deg);
+				}
+				50.0001% {
+					stroke-dashoffset: 268.606171575px;
+					transform: rotate(180deg);
+				}
+				62.5% {
+					stroke-dashoffset: 56.5486677px;
+					transform: rotate(180deg);
+				}
+				62.5001% {
+					stroke-dashoffset: 56.5486677px;
+					transform: rotateX(180deg) rotate(251.5deg);
+				}
+				75% {
+					stroke-dashoffset: 268.606171575px;
+					transform: rotateX(180deg) rotate(251.5deg);
+				}
+				75.001% {
+					stroke-dashoffset: 268.606171575px;
+					transform: rotate(90deg);
+				}
+				87.5% {
+					stroke-dashoffset: 56.5486677px;
+					transform: rotate(90deg);
+				}
+				87.5001% {
+					stroke-dashoffset: 56.5486677px;
+					transform: rotateX(180deg) rotate(341.5deg);
+				}
+				100% {
+					stroke-dashoffset: 268.606171575px;
+					transform: rotateX(180deg) rotate(341.5deg);
+				}
+			}
+
+			@keyframes mat-progress-spinner-linear-rotate {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+
+			.progress-spinner {
+				width: 100px;
+				height: 100px;
+				animation: mat-progress-spinner-linear-rotate 2000ms linear
+					infinite;
+			}
+
+			.progress-spinner circle {
+				stroke-dasharray: 282.743px;
+				stroke-width: 10%;
+				stroke: #fff;
+				opacity: 0.25;
+				animation-name: mat-progress-spinner-stroke-rotate-100;
+				animation-duration: 4000ms;
+				animation-timing-function: cubic-bezier(0.35, 0, 0.25, 1);
+				animation-iteration-count: infinite;
+				fill: transparent;
+				transform-origin: center;
+				transition: stroke-dashoffset 225ms linear;
+				transition-property: stroke;
+			}
+
+			.progress-spinner-container {
+				position: fixed;
+				margin: auto;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				width: 100px;
+				height: 100px;
+			}
 		</style>
 	</head>
 	<body>
@@ -80,6 +189,15 @@
 				/>
 			</div>
 			<p id="users" style="opacity: 0.4; margin-left: 16px"></p>
+		</div>
+		<div class="progress-spinner-container" id="loading">
+			<svg
+				class="progress-spinner"
+				focusable="false"
+				viewBox="0 0 100 100"
+			>
+				<circle cx="50%" cy="50%" r="45" style=""></circle>
+			</svg>
 		</div>
 		<script src="lib/adapter.min.js"></script>
 		<script src="lib/socket.io.js"></script>

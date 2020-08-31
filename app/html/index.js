@@ -122,6 +122,7 @@ class StreamInputController {
 
 	const streamEl = document.getElementById("stream");
 	const volumeSliderEl = document.getElementById("volume-slider");
+	const loadingEl = document.getElementById("loading");
 
 	streamEl.addEventListener("contextmenu", event => {
 		event.preventDefault();
@@ -131,6 +132,10 @@ class StreamInputController {
 		streamEl.volume = Number(volumeSliderEl.value);
 	});
 	streamEl.volume = volumeSliderEl.value = 0.7; // default volume
+
+	streamEl.addEventListener("playing", () => {
+		loadingEl.style.display = streamEl.paused ? "initial" : "none";
+	});
 
 	setInterval(() => {
 		if (streamEl.paused) {
