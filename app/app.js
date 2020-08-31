@@ -74,14 +74,30 @@ io.on("connection", socket => {
 		if (typeof up != "boolean") return;
 		xdotool(["click", up ? 4 : 5]);
 	});
+
+	const keysHeldDown = {}; // timeouts that will release them
+	const clearKeyHeldDown = keysym => {
+		if (keysHeldDown[keysym] == null) return;
+		clearTimeout(keysHeldDown[keysym]);
+		delete keysHeldDown[keysym];
+	};
+	const setKeyHeldDown = keysym => {
+		if (keysHeldDown[keysym] != null) clearKeyHeldDown(keysym);
+		keysHeldDown[keysym] = setTimeout(() => {
+			xdotool(["keyup", "0x" + keysym.toString(16)]);
+		}, 1000 * 3);
+	};
+
 	socket.on("keydown", keysym => {
 		if (controlsOwnerSocket != socket) return;
 		if (typeof keysym != "number") return;
+		setKeyHeldDown(keysym);
 		xdotool(["keydown", "0x" + keysym.toString(16)]);
 	});
 	socket.on("keyup", keysym => {
 		if (controlsOwnerSocket != socket) return;
 		if (typeof keysym != "number") return;
+		clearKeyHeldDown(keysym);
 		xdotool(["keyup", "0x" + keysym.toString(16)]);
 	});
 });
