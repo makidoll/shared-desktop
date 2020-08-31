@@ -26,7 +26,7 @@ RUN yay -Syu --noconfirm janus-gateway
 
 # install desktop
 RUN yay -Syu --noconfirm xf86-video-vesa mesa xorg-server-xvfb xdotool dbus pulseaudio
-RUN yay -Syu --noconfirm ttf-roboto openbox google-chrome xdg-utils xterm
+RUN yay -Syu --noconfirm ttf-roboto ttf-roboto-mono openbox google-chrome xdg-utils xterm feh
 # gnome-shell gnome-terminal nautilus
 
 # install chrome extensions
