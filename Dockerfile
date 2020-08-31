@@ -29,6 +29,14 @@ RUN yay -Syu --noconfirm xf86-video-vesa mesa xorg-server-xvfb xdotool dbus puls
 RUN yay -Syu --noconfirm ttf-roboto openbox google-chrome xdg-utils xterm
 # gnome-shell gnome-terminal nautilus
 
+# install chrome extensions
+COPY ./config/install-chrome-ext.sh /etc/tivoli-shared-desktop/install-chrome-ext.sh
+RUN cd /etc/tivoli-shared-desktop && \ 
+sudo ./install-chrome-ext.sh "cjpalhdlnbpafiamejdnhcphjbkeiagm" "uBlock Origin" && \
+sudo ./install-chrome-ext.sh "gphhapmejobijbbhgpjhcjognlahblep" "GNOME Shell integration" && \
+sudo ./install-chrome-ext.sh "ghbmnnjooekpmoecnnnilnnbdlolhkhi" "Google Docs Offline" && \
+sudo ./install-chrome-ext.sh "gbkeegbaiigmenfmjfclcdgdpimamgkj" "Office Editing for Docs, Sheets & Slides"
+
 # install gstreamer
 RUN yay -Syu --noconfirm gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly
 
