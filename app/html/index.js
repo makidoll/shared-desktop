@@ -108,6 +108,19 @@ class StreamInputController {
 }
 
 (async function () {
+	const queryParams = window.location.search
+		.substr(1)
+		.split("&")
+		.reduce((params, paramStr) => {
+			const param = paramStr.split("=");
+			if (param.length == 1) {
+				params[param[0]] = true;
+			} else if (param.length > 1) {
+				params[param[0]] = param[1];
+			}
+			return params;
+		}, {});
+
 	const displayPlural = (n, singular, plural = null) =>
 		n +
 		" " +
@@ -131,7 +144,15 @@ class StreamInputController {
 	volumeSliderEl.addEventListener("input", event => {
 		streamEl.volume = Number(volumeSliderEl.value);
 	});
-	streamEl.volume = volumeSliderEl.value = 0.7; // default volume
+
+	if (queryParams.volume != null) {
+		const volume = Number(queryParams.volume);
+		if (volume >= 0 && volume <= 1) {
+			streamEl.volume = volumeSliderEl.value = volume;
+		}
+	} else {
+		streamEl.volume = volumeSliderEl.value = 0.7; // default volume
+	}
 
 	streamEl.addEventListener("playing", () => {
 		loadingEl.style.display = streamEl.paused ? "initial" : "none";
@@ -302,4 +323,67 @@ class StreamInputController {
 			streamEl.play();
 		},
 	});
+
+	// dynamic lights
+
+	if (queryParams.dynamicLights) {
+		const canvas = document.createElement("canvas");
+		canvas.width = canvas.height = 30;
+
+		// document.body.appendChild(canvas);
+		// let debug = document.createElement("h2");
+		// document.body.appendChild(debug);
+
+		const ctx = canvas.getContext("2d");
+
+		const getAverageColor = (x, y) => {
+			const average = [0, 0, 0];
+			const colors = ctx.getImageData(x * 10, y * 10, 10, 10).data;
+
+			for (let i = 0; i < 100; i++) {
+				const index = i * 4;
+				average[0] += colors[index];
+				average[1] += colors[index + 1];
+				average[2] += colors[index + 2];
+			}
+
+			return [
+				Math.floor(average[0] / 100),
+				Math.floor(average[1] / 100),
+				Math.floor(average[2] / 100),
+			];
+		};
+
+		const getColors = () =>
+			[
+				// top
+				getAverageColor(0, 0),
+				getAverageColor(1, 0),
+				getAverageColor(2, 0),
+				// middle
+				getAverageColor(0, 1),
+				getAverageColor(2, 1),
+				// bottom
+				getAverageColor(0, 2),
+				getAverageColor(1, 2),
+				getAverageColor(2, 2),
+			]
+				.reduce((colors, c) => {
+					colors = colors.concat([c[0], c[1], c[2]]);
+					return colors;
+				}, [])
+				.join(",");
+
+		let renderWidth = canvas.width;
+		if (queryParams["3D"]) renderWidth = canvas.width * 2;
+
+		setInterval(() => {
+			ctx.drawImage(streamEl, 0, 0, renderWidth, canvas.height);
+
+			const color = getColors();
+			// debug.textContent = getColors();
+
+			if (window.qt) EventBridge.emitWebEvent(color);
+		}, 1000 / 30);
+	}
 })();
