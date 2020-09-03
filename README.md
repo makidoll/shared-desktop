@@ -5,4 +5,4 @@ Install Docker and Docker Compose and run:
 docker-compose up
 ```
 
-It will create an 3.5+ GB image
+It will create a 3.5+ GB image
