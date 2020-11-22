@@ -82,7 +82,7 @@ module.exports = {
 				"-S",
 				"stun.l.google.com:19302",
 				"-r",
-				"10000-10200",
+				process.env.RTP_PORT_RANGE,
 			],
 		},
 		{

@@ -84,7 +84,8 @@ ENV \
 DISPLAY=:1 \
 XDG_RUNTIME_DIR=/run/user/1000 \
 HOST_WIDTH=1366 \
-HOST_HEIGHT=768
+HOST_HEIGHT=768 \
+RTP_PORT_RANGE=10000-10200
 
 # run config with pm2
 RUN cd /etc/tivoli-shared-desktop/app && sudo npm install --no-save
