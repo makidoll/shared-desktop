@@ -1,5 +1,9 @@
+const fs = require("fs");
+
 const HOST_WIDTH = process.env.HOST_WIDTH;
 const HOST_HEIGHT = process.env.HOST_HEIGHT;
+
+const isArchLinux = fs.readFileSync("/etc/issue", "utf-8").startsWith("Arch");
 
 module.exports = {
 	apps: [
@@ -70,8 +74,16 @@ module.exports = {
 		},
 		{
 			name: "Janus",
-			script: "/usr/sbin/janus",
-			args: ["-S", "stun.l.google.com:19302", "-r", "10000-10200"],
+			script: isArchLinux ? "/usr/sbin/janus" : "/usr/bin/janus",
+			args: [
+				...(process.env.DOCKER_IP
+					? ["--nat-1-1", process.env.DOCKER_IP]
+					: []),
+				"-S",
+				"stun.l.google.com:19302",
+				"-r",
+				"10000-10200",
+			],
 		},
 		{
 			name: "App",
@@ -79,7 +91,7 @@ module.exports = {
 		},
 		{
 			name: "Caddy",
-			script: "/usr/sbin/caddy",
+			script: isArchLinux ? "/usr/sbin/caddy" : "/usr/bin/caddy",
 			args: ["run", "-config", "/etc/tivoli-shared-desktop/Caddyfile"],
 		},
 	],

@@ -41,7 +41,7 @@ sudo ./install-chrome-ext.sh "gbkeegbaiigmenfmjfclcdgdpimamgkj" "Office Editing 
 RUN yay -Syu --noconfirm gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly
 
 # install all other 
-RUN yay -Syu --noconfirm nodejs npm yarn caddy
+RUN yay -Syu --noconfirm nodejs npm caddy
 RUN sudo npm i -g pm2 
 
 # copy janus config
@@ -57,7 +57,6 @@ COPY \
 ./config/stream.sh \
 ./config/tivoli-background.jpg \
 /etc/tivoli-shared-desktop/
-
 COPY ./app/ /etc/tivoli-shared-desktop/app/
 
 # set background and vars
@@ -88,5 +87,5 @@ HOST_WIDTH=1366 \
 HOST_HEIGHT=768
 
 # run config with pm2
-RUN cd /etc/tivoli-shared-desktop/app && sudo yarn
+RUN cd /etc/tivoli-shared-desktop/app && sudo npm install --no-save
 CMD sudo -E pm2-runtime start /etc/tivoli-shared-desktop/ecosystem.config.js

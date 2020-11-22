@@ -1,1 +1,1 @@
-docker build -t tivolicloud/shared-desktop .
+docker build -f Dockerfile.ubuntu2004 -t tivolicloud/shared-desktop .

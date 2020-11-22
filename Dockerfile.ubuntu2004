@@ -1,0 +1,91 @@
+FROM ubuntu:20.04
+
+RUN \
+# update packages
+DEBIAN_FRONTEND=noninteractive apt-get update -y && \
+DEBIAN_FRONTEND=noninteractive apt-get install -y \
+# install general
+sudo wget curl \
+# install desktop
+xvfb xdotool dbus dbus-x11 pulseaudio fonts-roboto openbox xdg-utils xterm feh \
+# install gstreamer
+gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-pulseaudio && \
+# install janus gateway (ubuntu uses incompatible libsrtp 2.3.0, https://gitlab.com/packaging/janus)
+curl -sL -o /etc/apt/trusted.gpg.d/morph027-janus.asc https://packaging.gitlab.io/janus/gpg.key && \
+echo "deb [arch=amd64] https://packaging.gitlab.io/janus/focal focal main" > /etc/apt/sources.list.d/morph027-janus.list && \
+DEBIAN_FRONTEND=noninteractive apt-get update -y && \
+DEBIAN_FRONTEND=noninteractive apt-get install -y janus && \
+# install nodejs and pm2
+curl -o nodejs.sh -L https://deb.nodesource.com/setup_14.x && \
+bash nodejs.sh && \
+rm -f nodejs.sh && \
+DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs && \
+npm i -g pm2 && \
+# install caddy
+curl -o /usr/bin/caddy -L https://caddyserver.com/api/download?os=linux\&arch=amd64 && \
+chmod +x /usr/bin/caddy && \
+# install google chrome
+curl -OL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+DEBIAN_FRONTEND=noninteractive apt-get install -y ./google-chrome-stable_current_amd64.deb && \
+rm -f google-chrome-stable_current_amd64.deb && \
+# create tivoli sudo user without password
+useradd -m tivoli && usermod -L tivoli && \
+echo "tivoli ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+USER tivoli
+WORKDIR /home/tivoli
+
+# install chrome extensions
+COPY ./config/install-chrome-ext.sh /etc/tivoli-shared-desktop/install-chrome-ext.sh
+RUN cd /etc/tivoli-shared-desktop && \ 
+sudo ./install-chrome-ext.sh "cjpalhdlnbpafiamejdnhcphjbkeiagm" "uBlock Origin" && \
+sudo ./install-chrome-ext.sh "gphhapmejobijbbhgpjhcjognlahblep" "GNOME Shell integration" && \
+sudo ./install-chrome-ext.sh "ghbmnnjooekpmoecnnnilnnbdlolhkhi" "Google Docs Offline" && \
+sudo ./install-chrome-ext.sh "gbkeegbaiigmenfmjfclcdgdpimamgkj" "Office Editing for Docs, Sheets & Slides"
+
+# copy janus config
+COPY \
+./config/janus.jcfg \
+./config/janus.plugin.streaming.jcfg \
+/etc/janus/
+
+# copy tivoli shared desktop config
+COPY \
+./config/ecosystem.config.js \
+./config/Caddyfile \
+./config/stream.sh \
+./config/tivoli-background.jpg \
+/etc/tivoli-shared-desktop/
+COPY ./app/ /etc/tivoli-shared-desktop/app/
+
+# set background and vars
+RUN \
+mkdir -p .config/openbox && \
+echo "feh --bg-fill /etc/tivoli-shared-desktop/tivoli-background.jpg" > .config/openbox/autostart && \
+chmod +x .config/openbox/autostart && \
+# vars
+sudo bash -c "echo 'DISPLAY=:1' >> /etc/environment" && \
+sudo bash -c "echo 'XDG_RUNTIME_DIR=/run/user/1000' >> /etc/environment" && \
+sudo mkdir -p /var/run/dbus && \
+# user
+sudo mkdir -p /run/user/1000 && \
+sudo chown tivoli:tivoli /run/user/1000 && \
+# machine id
+sudo rm -f /etc/machine-id /var/lib/dbus/machine-id && \
+sudo dbus-uuidgen --ensure=/etc/machine-id && \
+sudo dbus-uuidgen --ensure && \
+# make google chrome default
+sudo xdg-mime default google-chrome-stable.desktop x-scheme-handler/http && \
+sudo xdg-mime default google-chrome-stable.desktop x-scheme-handler/https && \
+sudo xdg-mime default google-chrome-stable.desktop text/html
+
+ENV \
+DISPLAY=:1 \
+XDG_RUNTIME_DIR=/run/user/1000 \
+HOST_WIDTH=1366 \
+HOST_HEIGHT=768
+
+# run config with pm2
+RUN cd /etc/tivoli-shared-desktop/app && sudo npm install --no-save
+CMD sudo -E pm2-runtime start /etc/tivoli-shared-desktop/ecosystem.config.js
