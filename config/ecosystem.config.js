@@ -80,7 +80,7 @@ module.exports = {
 		{
 			name: "Caddy",
 			script: "/usr/sbin/caddy",
-			args: ["-conf", "/etc/tivoli-shared-desktop/Caddyfile"],
+			args: ["run", "-config", "/etc/tivoli-shared-desktop/Caddyfile"],
 		},
 	],
 };
