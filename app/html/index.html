@@ -179,6 +179,27 @@
 				width: 100px;
 				height: 100px;
 			}
+
+			#get-user-input {
+				position: fixed;
+				margin: auto;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				background-color: rgba(29, 31, 33, 0.9);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				flex-direction: column;
+				color: #fff;
+				cursor: pointer;
+			}
+
+			#get-user-input .play-button {
+				width: 128px;
+				height: 128px;
+			}
 		</style>
 	</head>
 	<body>
@@ -206,6 +227,20 @@
 			>
 				<circle cx="50%" cy="50%" r="45" style=""></circle>
 			</svg>
+		</div>
+		<div id="get-user-input" style="display: none">
+			<svg
+				style="margin-top: 12px"
+				class="play-button"
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 24 24"
+				fill="#fff"
+			>
+				<path
+					d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"
+				/>
+			</svg>
+			<p style="margin: 0; font-weight: 400">Click to continue</p>
 		</div>
 		<script src="lib/adapter.min.js"></script>
 		<script src="lib/socket.io.js"></script>

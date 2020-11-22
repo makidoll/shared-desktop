@@ -107,104 +107,7 @@ class StreamInputController {
 	}
 }
 
-(async function () {
-	const queryParams = window.location.search
-		.substr(1)
-		.split("&")
-		.reduce((params, paramStr) => {
-			const param = paramStr.split("=");
-			if (param.length == 1) {
-				params[param[0]] = true;
-			} else if (param.length > 1) {
-				params[param[0]] = param[1];
-			}
-			return params;
-		}, {});
-
-	const displayPlural = (n, singular, plural = null) =>
-		n +
-		" " +
-		(n === 1 ? singular : plural != null ? plural : singular + "s");
-
-	// initial query params
-
-	if (queryParams.hideControls) {
-		document.body.className = "hide-controls";
-	}
-
-	// socket to node server for handling input
-
-	const socket = io();
-	window.socket = socket;
-
-	// make sure the stream is playing
-
-	const streamEl = document.getElementById("stream");
-	const volumeSliderEl = document.getElementById("volume-slider");
-	const loadingEl = document.getElementById("loading");
-
-	streamEl.addEventListener("contextmenu", event => {
-		event.preventDefault();
-	});
-
-	volumeSliderEl.addEventListener("input", event => {
-		streamEl.volume = Number(volumeSliderEl.value);
-	});
-
-	if (queryParams.volume != null) {
-		const volume = Number(queryParams.volume);
-		if (volume >= 0 && volume <= 1) {
-			streamEl.volume = volumeSliderEl.value = volume;
-		}
-	} else {
-		streamEl.volume = volumeSliderEl.value = 0.7; // default volume
-	}
-
-	streamEl.addEventListener("playing", () => {
-		loadingEl.style.display = streamEl.paused ? "initial" : "none";
-	});
-
-	setInterval(() => {
-		if (streamEl.paused) {
-			try {
-				streamEl.play();
-			} catch (err) {}
-		}
-	}, 500);
-
-	// controller management
-
-	const controller = new StreamInputController(socket, streamEl);
-	window.controller = controller;
-
-	const usersEl = document.getElementById("users");
-	const toggleControlsEl = document.getElementById("toggle-controls");
-
-	toggleControlsEl.addEventListener("click", () => {
-		socket.emit("toggleControls");
-	});
-
-	socket.on("info", info => {
-		usersEl.textContent =
-			displayPlural(info.users, "person", "people") + " watching";
-
-		if (info.controlsOwner == socket.id) {
-			controller.start();
-			toggleControlsEl.textContent = "Stop controlling";
-			toggleControlsEl.disabled = false;
-		} else if (info.controlsOwner != null) {
-			controller.stop();
-			toggleControlsEl.textContent = "Someone is controlling";
-			toggleControlsEl.disabled = true;
-		} else {
-			controller.stop();
-			toggleControlsEl.textContent = "Start controlling";
-			toggleControlsEl.disabled = false;
-		}
-	});
-
-	// janus video stuff
-
+const startJanus = async streamEl => {
 	await new Promise(callback => {
 		Janus.init({
 			// debug: "all",
@@ -329,6 +232,116 @@ class StreamInputController {
 			streamEl.play();
 		},
 	});
+};
+
+(async function () {
+	const queryParams = window.location.search
+		.substr(1)
+		.split("&")
+		.reduce((params, paramStr) => {
+			const param = paramStr.split("=");
+			if (param.length == 1) {
+				params[param[0]] = true;
+			} else if (param.length > 1) {
+				params[param[0]] = param[1];
+			}
+			return params;
+		}, {});
+
+	const displayPlural = (n, singular, plural = null) =>
+		n +
+		" " +
+		(n === 1 ? singular : plural != null ? plural : singular + "s");
+
+	// initial query params
+
+	if (queryParams.hideControls) {
+		document.body.className = "hide-controls";
+	}
+
+	// socket to node server for handling input
+
+	const socket = io();
+	window.socket = socket;
+
+	// make sure the stream is playing
+
+	const streamEl = document.getElementById("stream");
+	const volumeSliderEl = document.getElementById("volume-slider");
+	const loadingEl = document.getElementById("loading");
+
+	streamEl.addEventListener("contextmenu", event => {
+		event.preventDefault();
+	});
+
+	volumeSliderEl.addEventListener("input", event => {
+		streamEl.volume = Number(volumeSliderEl.value);
+	});
+
+	if (queryParams.volume != null) {
+		const volume = Number(queryParams.volume);
+		if (volume >= 0 && volume <= 1) {
+			streamEl.volume = volumeSliderEl.value = volume;
+		}
+	} else {
+		streamEl.volume = volumeSliderEl.value = 0.7; // default volume
+	}
+
+	streamEl.addEventListener("playing", () => {
+		loadingEl.style.display = streamEl.paused ? "initial" : "none";
+	});
+
+	setInterval(() => {
+		if (streamEl.paused) {
+			try {
+				streamEl.play();
+			} catch (err) {}
+		}
+	}, 500);
+
+	// controller management
+
+	const controller = new StreamInputController(socket, streamEl);
+	window.controller = controller;
+
+	const usersEl = document.getElementById("users");
+	const toggleControlsEl = document.getElementById("toggle-controls");
+
+	toggleControlsEl.addEventListener("click", () => {
+		socket.emit("toggleControls");
+	});
+
+	socket.on("info", info => {
+		usersEl.textContent =
+			displayPlural(info.users, "person", "people") + " watching";
+
+		if (info.controlsOwner == socket.id) {
+			controller.start();
+			toggleControlsEl.textContent = "Stop controlling";
+			toggleControlsEl.disabled = false;
+		} else if (info.controlsOwner != null) {
+			controller.stop();
+			toggleControlsEl.textContent = "Someone is controlling";
+			toggleControlsEl.disabled = true;
+		} else {
+			controller.stop();
+			toggleControlsEl.textContent = "Start controlling";
+			toggleControlsEl.disabled = false;
+		}
+	});
+
+	// janus video stuff
+
+	if (window.qt) {
+		startJanus(streamEl);
+	} else {
+		const getUserInputEl = document.getElementById("get-user-input");
+		getUserInputEl.style.display = "flex";
+		getUserInputEl.addEventListener("click", e => {
+			getUserInputEl.parentNode.removeChild(getUserInputEl);
+			startJanus(streamEl);
+		});
+	}
 
 	// dynamic lights
 
