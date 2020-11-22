@@ -126,6 +126,12 @@ class StreamInputController {
 		" " +
 		(n === 1 ? singular : plural != null ? plural : singular + "s");
 
+	// initial query params
+
+	if (queryParams.hideControls) {
+		document.body.className = "hide-controls";
+	}
+
 	// socket to node server for handling input
 
 	const socket = io();

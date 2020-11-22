@@ -26,7 +26,7 @@
 				width: calc((100vh - 48px) * (16 / 9));
 			}
 
-			.info-bar {
+			.controls-bar {
 				position: fixed;
 				margin: auto;
 				left: 0;
@@ -41,11 +41,19 @@
 				padding: 0 16px;
 			}
 
-			.info-bar * {
+			body.hide-controls #stream {
+				height: 100vh;
+				width: calc(100vh * (16 / 9));
+			}
+			body.hide-controls .controls-bar {
+				display: none;
+			}
+
+			.controls-bar * {
 				margin: 0;
 			}
 
-			.info-bar button {
+			.controls-bar button {
 				font-size: 1.2rem;
 				font-family: "Roboto", sans-serif;
 				border: none;
@@ -55,7 +63,7 @@
 				padding: 4px 12px;
 			}
 
-			.info-bar button:disabled {
+			.controls-bar button:disabled {
 				opacity: 0.4;
 			}
 
@@ -175,7 +183,7 @@
 	</head>
 	<body>
 		<video id="stream" tabindex="-1" autoplay></video>
-		<div class="info-bar">
+		<div class="controls-bar">
 			<button id="toggle-controls" disabled></button>
 			<div style="margin-left: 16px" style="opacity: 0.4">
 				<p>Local volume</p>
