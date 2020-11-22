@@ -45,23 +45,27 @@ RUN yay -Syu --noconfirm nodejs npm yarn caddy
 RUN sudo npm i -g pm2 
 
 # copy janus config
-COPY ./config/janus.jcfg /etc/janus
-COPY ./config/janus.plugin.streaming.jcfg /etc/janus
+COPY \
+./config/janus.jcfg \
+./config/janus.plugin.streaming.jcfg \
+/etc/janus/
 
 # copy tivoli shared desktop config
-COPY ./config/ecosystem.config.js /etc/tivoli-shared-desktop/ecosystem.config.js 
-COPY ./config/Caddyfile /etc/tivoli-shared-desktop/Caddyfile 
-COPY ./config/stream.sh /etc/tivoli-shared-desktop/stream.sh
-COPY ./config/tivoli-background.jpg /etc/tivoli-shared-desktop/tivoli-background.jpg
-COPY ./app /etc/tivoli-shared-desktop/app
+COPY \
+./config/ecosystem.config.js \
+./config/Caddyfile \
+./config/stream.sh \
+./config/tivoli-background.jpg \
+/etc/tivoli-shared-desktop/
 
-# set background
-RUN mkdir -p .config/openbox && \
-echo "feh --bg-fill /etc/tivoli-shared-desktop/tivoli-background.jpg" > .config/openbox/autostart && \
-chmod +x .config/openbox/autostart
+COPY ./app/ /etc/tivoli-shared-desktop/app/
 
-# add vars
+# set background and vars
 RUN \
+mkdir -p .config/openbox && \
+echo "feh --bg-fill /etc/tivoli-shared-desktop/tivoli-background.jpg" > .config/openbox/autostart && \
+chmod +x .config/openbox/autostart && \
+# vars
 sudo bash -c "echo 'DISPLAY=:1' >> /etc/environment" && \
 sudo bash -c "echo 'XDG_RUNTIME_DIR=/run/user/1000' >> /etc/environment" && \
 sudo mkdir -p /var/run/dbus && \
@@ -77,11 +81,11 @@ sudo xdg-mime default google-chrome-stable.desktop x-scheme-handler/http && \
 sudo xdg-mime default google-chrome-stable.desktop x-scheme-handler/https && \
 sudo xdg-mime default google-chrome-stable.desktop text/html
 
-ENV DISPLAY=:1
-ENV XDG_RUNTIME_DIR=/run/user/1000
-
-ENV HOST_WIDTH=1366
-ENV HOST_HEIGHT=768
+ENV \
+DISPLAY=:1 \
+XDG_RUNTIME_DIR=/run/user/1000 \
+HOST_WIDTH=1366 \
+HOST_HEIGHT=768
 
 # run config with pm2
 RUN cd /etc/tivoli-shared-desktop/app && sudo yarn
