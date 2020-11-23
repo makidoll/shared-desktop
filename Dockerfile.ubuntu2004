@@ -1,9 +1,17 @@
 FROM ubuntu:20.04
 
+ENV \
+HOST_WIDTH=1366 \
+HOST_HEIGHT=768 \
+RTP_PORT_RANGE=10000-10200 \
+DEBIAN_FRONTEND=noninteractive \
+XDG_RUNTIME_DIR=/run/user/1000 \
+DISPLAY=:1
+
 RUN \
 # update packages
-DEBIAN_FRONTEND=noninteractive apt-get update -y && \
-DEBIAN_FRONTEND=noninteractive apt-get install -y \
+apt-get update -y && \
+apt-get install -y \
 # install general
 sudo wget curl \
 # install desktop
@@ -13,20 +21,20 @@ gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer
 # install janus gateway (ubuntu uses incompatible libsrtp 2.3.0, https://gitlab.com/packaging/janus)
 curl -sL -o /etc/apt/trusted.gpg.d/morph027-janus.asc https://packaging.gitlab.io/janus/gpg.key && \
 echo "deb [arch=amd64] https://packaging.gitlab.io/janus/focal focal main" > /etc/apt/sources.list.d/morph027-janus.list && \
-DEBIAN_FRONTEND=noninteractive apt-get update -y && \
-DEBIAN_FRONTEND=noninteractive apt-get install -y janus && \
+apt-get update -y && \
+apt-get install -y janus && \
 # install nodejs and pm2
 curl -o nodejs.sh -L https://deb.nodesource.com/setup_14.x && \
 bash nodejs.sh && \
 rm -f nodejs.sh && \
-DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs && \
+apt-get install -y nodejs && \
 npm i -g pm2 && \
 # install caddy
 curl -o /usr/bin/caddy -L https://caddyserver.com/api/download?os=linux\&arch=amd64 && \
 chmod +x /usr/bin/caddy && \
 # install google chrome
 curl -OL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-DEBIAN_FRONTEND=noninteractive apt-get install -y ./google-chrome-stable_current_amd64.deb && \
+apt-get install -y ./google-chrome-stable_current_amd64.deb && \
 rm -f google-chrome-stable_current_amd64.deb && \
 # create tivoli sudo user without password
 useradd -m tivoli && usermod -L tivoli && \
@@ -59,8 +67,8 @@ COPY \
 /etc/tivoli-shared-desktop/
 COPY ./app/ /etc/tivoli-shared-desktop/app/
 
-# set background and vars
 RUN \
+# set background
 mkdir -p .config/openbox && \
 echo "feh --bg-fill /etc/tivoli-shared-desktop/tivoli-background.jpg" > .config/openbox/autostart && \
 chmod +x .config/openbox/autostart && \
@@ -79,13 +87,6 @@ sudo dbus-uuidgen --ensure && \
 sudo xdg-mime default google-chrome-stable.desktop x-scheme-handler/http && \
 sudo xdg-mime default google-chrome-stable.desktop x-scheme-handler/https && \
 sudo xdg-mime default google-chrome-stable.desktop text/html
-
-ENV \
-DISPLAY=:1 \
-XDG_RUNTIME_DIR=/run/user/1000 \
-HOST_WIDTH=1366 \
-HOST_HEIGHT=768 \
-RTP_PORT_RANGE=10000-10200
 
 # run config with pm2
 RUN cd /etc/tivoli-shared-desktop/app && sudo npm install --no-save
