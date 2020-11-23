@@ -1,12 +1,6 @@
 FROM ubuntu:20.04
 
-ENV \
-HOST_WIDTH=1366 \
-HOST_HEIGHT=768 \
-RTP_PORT_RANGE=10000-10200 \
-DEBIAN_FRONTEND=noninteractive \
-XDG_RUNTIME_DIR=/run/user/1000 \
-DISPLAY=:1
+ENV DEBIAN_FRONTEND=noninteractive 
 
 RUN \
 # update packages
@@ -39,10 +33,18 @@ rm -f google-chrome-stable_current_amd64.deb && \
 # create tivoli sudo user without password
 useradd -m tivoli && usermod -L tivoli && \
 echo "tivoli ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+chsh tivoli -s /usr/bin/bash
 
 USER tivoli
 WORKDIR /home/tivoli
+
+ENV \
+HOST_WIDTH=1366 \
+HOST_HEIGHT=768 \
+RTP_PORT_RANGE=10000-10200 \
+XDG_RUNTIME_DIR=/run/user/1000 \
+DISPLAY=:1
 
 # install chrome extensions
 COPY ./config/install-chrome-ext.sh /etc/tivoli-shared-desktop/install-chrome-ext.sh
