@@ -5,7 +5,7 @@ services:
         # restart: always
         ports:
             - 8080:80/tcp
-            - 10000-10200/udp
+            - 10000-10200:10000-10200/udp
         environment:
             - RTP_PORT_RANGE=10000-10200
             - DOCKER_IP=172.17.0.1 # public ip or `ip addr | grep docker`
