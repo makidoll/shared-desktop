@@ -262,7 +262,11 @@ const startJanus = async streamEl => {
 
 	// socket to node server for handling input
 
-	const socket = io();
+	const socket = io({
+		query: {
+			password: queryParams.password,
+		},
+	});
 	window.socket = socket;
 
 	// make sure the stream is playing
@@ -312,22 +316,40 @@ const startJanus = async streamEl => {
 		socket.emit("toggleControls");
 	});
 
+	const iconHtml = icon => '<i class="material-icons">' + icon + "</i> ";
+
 	socket.on("info", info => {
 		usersEl.textContent =
 			displayPlural(info.users, "person", "people") + " watching";
 
-		if (info.controlsOwner == socket.id) {
-			controller.start();
-			toggleControlsEl.textContent = "Stop controlling";
-			toggleControlsEl.disabled = false;
-		} else if (info.controlsOwner != null) {
+		if (!info.hasPassword || (info.hasPassword && info.validPassword)) {
+			if (info.controlsOwner == socket.id) {
+				controller.start();
+				toggleControlsEl.innerHTML =
+					iconHtml("stop") + "Stop controlling";
+				toggleControlsEl.disabled = false;
+			} else if (info.controlsOwner != null) {
+				if (info.allowSteal) {
+					controller.stop();
+					toggleControlsEl.innerHTML =
+						iconHtml("skip_next") + "Steal controls";
+					toggleControlsEl.disabled = false;
+				} else {
+					controller.stop();
+					toggleControlsEl.innerHTML =
+						iconHtml("close") + "Someone is controlling";
+					toggleControlsEl.disabled = true;
+				}
+			} else {
+				controller.stop();
+				toggleControlsEl.innerHTML =
+					iconHtml("play_arrow") + "Start controlling";
+				toggleControlsEl.disabled = false;
+			}
+		} else if (!info.validPassword) {
 			controller.stop();
-			toggleControlsEl.textContent = "Someone is controlling";
+			toggleControlsEl.innerHTML = iconHtml("close") + "Can't control";
 			toggleControlsEl.disabled = true;
-		} else {
-			controller.stop();
-			toggleControlsEl.textContent = "Start controlling";
-			toggleControlsEl.disabled = false;
 		}
 	});
 

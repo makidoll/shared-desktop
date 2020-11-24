@@ -4,39 +4,65 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 const path = require("path");
 const { spawn } = require("child_process");
+const mitt = require("mitt");
+
+const boolEnv = str => str != null && str != "false" && str != "0" && str != "";
 
 const HOST_WIDTH = process.env.HOST_WIDTH;
 const HOST_HEIGHT = process.env.HOST_HEIGHT;
+const PASSWORD = process.env.PASSWORD;
+const ALLOW_STEAL = boolEnv(process.env.ALLOW_STEAL);
 
 app.use(express.static(path.resolve(__dirname, "html")));
 
 const xdotool = args => {
-	const child = spawn("xdotool", args, {
+	spawn("xdotool", args, {
 		stdio: [0, "pipe", "pipe"],
 	});
-	child.stdout;
 };
 
 let users = 0;
-
 let controlsOwnerSocket = null;
+
+const emitter = mitt();
+const hasPassword =
+	PASSWORD != null && typeof PASSWORD == "string" && PASSWORD.trim() != "";
 
 io.on("connection", socket => {
 	users++;
 
-	const updateInfoForAll = () => {
-		io.emit("info", {
+	const userPassword = socket.handshake.query.password;
+
+	const updateInfo = () => {
+		socket.emit("info", {
 			users,
+			hasPassword,
+			...(hasPassword
+				? {
+						validPassword: userPassword == PASSWORD,
+				  }
+				: {}),
+			allowSteal: ALLOW_STEAL,
 			controlsOwner: controlsOwnerSocket ? controlsOwnerSocket.id : null,
 		});
 	};
 
+	emitter.on("updateInfoForAll", updateInfo);
+
+	const updateInfoForAll = () => {
+		emitter.emit("updateInfoForAll");
+	};
+
 	socket.on("toggleControls", () => {
+		if (hasPassword && userPassword != PASSWORD) return;
 		if (controlsOwnerSocket == null) {
 			controlsOwnerSocket = socket;
 			updateInfoForAll();
 		} else if (controlsOwnerSocket == socket) {
 			controlsOwnerSocket = null;
+			updateInfoForAll();
+		} else if (ALLOW_STEAL) {
+			controlsOwnerSocket = socket;
 			updateInfoForAll();
 		}
 	});
@@ -46,6 +72,7 @@ io.on("connection", socket => {
 			controlsOwnerSocket = null;
 		}
 		users--;
+		emitter.off("updateInfoForAll", updateInfo);
 		updateInfoForAll();
 	});
 

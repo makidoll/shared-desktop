@@ -4,6 +4,7 @@ On any shared desktop page you can use these query paramaters:
 
 -   `volume=[0 to 1]`
 -   `hideControls`
+-   `password=[password]` Used with `PASSWORD` environment variable
 
 To be used with [this client entity script](https://hifi.maki.cafe/client-entity-scripts/cinematheque/dynamicLightsAndVolumeSliderOnWebEntity.js)
 
