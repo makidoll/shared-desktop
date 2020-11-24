@@ -14,9 +14,5 @@ gst-launch-1.0 \
 
     # nvh264enc bitrate=4000 rc-mode=cbr preset=low-latency ! \
       
-    # vp8enc cpu-used=8 threads=4 deadline=1 error-resilient=partitions keyframe-max-dist=20 auto-alt-ref=true ! \
     # openh264enc multi-thread=4 complexity=low bitrate=4000000 max-bitrate=4500000 ! \
       # capssetter caps="application/x-rtp,profile-level-id=(string)42e01f" ! \
-
-    # vp8enc cpu-used=8 threads=4 deadline=1 error-resilient=partitions keyframe-max-dist=20 auto-alt-ref=true ! \
-    # vp8enc target-bitrate=800000 cpu-used=8 threads=4 deadline=1 error-resilient=partitions keyframe-max-dist=20 auto-alt-ref=true ! \

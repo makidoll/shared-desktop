@@ -10,7 +10,15 @@ tivoli-shared-desktop: {
   
   video = true
   videoport = 5004
-  videopt = 96
-  videortpmap = "H264/90000"
-  videofmtp = "profile-level-id=42e01f;packetization-mode=1"
+
+  #ifdef h264
+  # videopt = 96
+  # videortpmap = "H264/90000"
+  # videofmtp = "profile-level-id=42e01f;packetization-mode=1"
+  #endif
+  
+  #ifdef vp8
+  # videopt = 100
+  # videortpmap = "VP8/90000"
+  #endif
 }

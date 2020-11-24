@@ -9,3 +9,4 @@ services:
         environment:
             - RTP_PORT_RANGE=10000-10200
             - DOCKER_IP=172.17.0.1 # public ip or `ip addr | grep docker`
+            - CODEC=h264 # or vp8 (not recommended)

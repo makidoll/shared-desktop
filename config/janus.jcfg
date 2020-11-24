@@ -39,7 +39,7 @@ nat: {
 
 plugins: {
 	# ls -p /usr/lib/janus/plugins | grep ".so$" | tr '\n' ','
-	# ls -p /usr/lib/x86_64-linux-gnu/janus/plugins | grep ".so$" | tr '\n' ','
+	# ls -p /usr/local/lib/janus/plugins | grep ".so$" | tr '\n' ','
 
     # disable = "libjanus_audiobridge.so,libjanus_duktape.so,libjanus_echotest.so,libjanus_lua.so,libjanus_nosip.so,libjanus_recordplay.so,libjanus_sip.so,libjanus_sipre.so,libjanus_streaming.so,libjanus_textroom.so,libjanus_videocall.so,libjanus_videoroom.so,libjanus_voicemail.so"
     
@@ -49,7 +49,7 @@ plugins: {
 
 transports: {
     # ls -p /usr/lib/janus/transports | grep ".so$" | tr '\n' ','
-	# ls -p /usr/lib/x86_64-linux-gnu/janus/transports | grep ".so$" | tr '\n' ','
+	# ls -p /usr/local/lib/janus/transports | grep ".so$" | tr '\n' ','
 
     # disable = "libjanus_http.so,libjanus_mqtt.so,libjanus_nanomsg.so,libjanus_pfunix.so,libjanus_rabbitmq.so,libjanus_websockets.so"
     

@@ -14,8 +14,8 @@ echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 USER tivoli
 WORKDIR /home/tivoli
 
-RUN \ 
 # install yay
+RUN \ 
 sudo pacman -Syu --noconfirm base-devel sudo git && \
 git clone https://aur.archlinux.org/yay.git && \
 cd yay && makepkg -si --noconfirm && \
@@ -24,10 +24,19 @@ cd .. && rm -rf yay
 # install janus gateway
 RUN yay -Syu --noconfirm janus-gateway
 
+RUN \
+yay -Syu --noconfirm \
 # install desktop
-RUN yay -Syu --noconfirm xf86-video-vesa mesa xorg-server-xvfb xdotool dbus pulseaudio
-RUN yay -Syu --noconfirm ttf-roboto ttf-roboto-mono openbox google-chrome xdg-utils xterm feh
-# gnome-shell gnome-terminal nautilus
+xf86-video-vesa mesa xorg-server-xvfb xdotool dbus pulseaudio \
+ttf-roboto openbox google-chrome xdg-utils xterm feh \
+# install gstreamer
+gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly \
+# install all other 
+nodejs npm caddy-bin && \
+# install pm2
+sudo npm i -g pm2 && \
+# cleanup
+sudo rm -rf /var/cache/pacman/* ~/.cache
 
 # install chrome extensions
 COPY ./config/install-chrome-ext.sh /etc/tivoli-shared-desktop/install-chrome-ext.sh
@@ -36,13 +45,6 @@ sudo ./install-chrome-ext.sh "cjpalhdlnbpafiamejdnhcphjbkeiagm" "uBlock Origin" 
 sudo ./install-chrome-ext.sh "gphhapmejobijbbhgpjhcjognlahblep" "GNOME Shell integration" && \
 sudo ./install-chrome-ext.sh "ghbmnnjooekpmoecnnnilnnbdlolhkhi" "Google Docs Offline" && \
 sudo ./install-chrome-ext.sh "gbkeegbaiigmenfmjfclcdgdpimamgkj" "Office Editing for Docs, Sheets & Slides"
-
-# install gstreamer
-RUN yay -Syu --noconfirm gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly
-
-# install all other 
-RUN yay -Syu --noconfirm nodejs npm caddy
-RUN sudo npm i -g pm2 
 
 # copy janus config
 COPY \
@@ -54,7 +56,8 @@ COPY \
 COPY \
 ./config/ecosystem.config.js \
 ./config/Caddyfile \
-./config/stream.sh \
+./config/stream-h264.sh \
+./config/stream-vp8.sh \
 ./config/tivoli-background.jpg \
 /etc/tivoli-shared-desktop/
 COPY ./app/ /etc/tivoli-shared-desktop/app/
@@ -81,11 +84,12 @@ sudo xdg-mime default google-chrome-stable.desktop x-scheme-handler/https && \
 sudo xdg-mime default google-chrome-stable.desktop text/html
 
 ENV \
-DISPLAY=:1 \
-XDG_RUNTIME_DIR=/run/user/1000 \
 HOST_WIDTH=1366 \
 HOST_HEIGHT=768 \
-RTP_PORT_RANGE=10000-10200
+RTP_PORT_RANGE=10000-10200 \
+XDG_RUNTIME_DIR=/run/user/1000 \
+DISPLAY=:1 \
+CODEC=h264
 
 # run config with pm2
 RUN cd /etc/tivoli-shared-desktop/app && sudo npm install --no-save

@@ -5,6 +5,26 @@ const HOST_HEIGHT = process.env.HOST_HEIGHT;
 
 const isArchLinux = fs.readFileSync("/etc/issue", "utf-8").startsWith("Arch");
 
+const codec = (process.env.CODEC || "").toLowerCase() || "h264";
+if (codec != "h264" && codec != "vp8") return;
+
+// update janus config for correct codec
+
+const configPath = "/etc/janus/janus.plugin.streaming.jcfg";
+const config = fs.readFileSync(configPath, "utf8");
+const codecConfig = config.match(
+	new RegExp("#ifdef " + codec + "([^]+?)#endif", "i"),
+);
+fs.writeFileSync(
+	configPath,
+	config
+		.replace(codecConfig[0], codecConfig[1].replace(/# /g, "").trim())
+		.split("\n")
+		.map(line => (line.trim().startsWith("#") ? null : line))
+		.filter(line => line != null)
+		.join("\n"),
+);
+
 module.exports = {
 	apps: [
 		{
@@ -68,13 +88,17 @@ module.exports = {
 			],
 		},
 		{
-			name: "Stream",
+			name: "Stream " + codec,
 			script: "su",
-			args: ["tivoli", "-c", "/etc/tivoli-shared-desktop/stream.sh"],
+			args: [
+				"tivoli",
+				"-c",
+				"/etc/tivoli-shared-desktop/stream-" + codec + ".sh",
+			],
 		},
 		{
 			name: "Janus",
-			script: isArchLinux ? "/usr/sbin/janus" : "/usr/bin/janus",
+			script: isArchLinux ? "/usr/sbin/janus" : "/usr/local/bin/janus",
 			args: [
 				...(process.env.DOCKER_IP
 					? ["--nat-1-1", process.env.DOCKER_IP]

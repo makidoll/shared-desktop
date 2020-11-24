@@ -1,4 +1,7 @@
-FROM ubuntu:20.04
+# FROM debian:bullseye-slim
+# https://github.com/canyanio/janus-gateway-docker
+# https://hub.docker.com/r/canyan/janus-gateway
+FROM canyan/janus-gateway:0.10.7
 
 ENV DEBIAN_FRONTEND=noninteractive 
 
@@ -7,16 +10,12 @@ RUN \
 apt-get update -y && \
 apt-get install -y \
 # install general
-sudo wget curl \
+sudo bash wget curl \
 # install desktop
 xvfb xdotool dbus dbus-x11 pulseaudio fonts-roboto openbox xdg-utils xterm feh \
 # install gstreamer
-gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-pulseaudio && \
-# install janus gateway (ubuntu uses incompatible libsrtp 2.3.0, https://gitlab.com/packaging/janus)
-curl -sL -o /etc/apt/trusted.gpg.d/morph027-janus.asc https://packaging.gitlab.io/janus/gpg.key && \
-echo "deb [arch=amd64] https://packaging.gitlab.io/janus/focal focal main" > /etc/apt/sources.list.d/morph027-janus.list && \
-apt-get update -y && \
-apt-get install -y janus && \
+gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-pulseaudio && \
 # install nodejs and pm2
 curl -o nodejs.sh -L https://deb.nodesource.com/setup_14.x && \
 bash nodejs.sh && \
@@ -34,7 +33,10 @@ rm -f google-chrome-stable_current_amd64.deb && \
 useradd -m tivoli && usermod -L tivoli && \
 echo "tivoli ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
 echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-chsh tivoli -s /usr/bin/bash
+chsh tivoli -s /bin/bash && \
+# cleanup
+apt-get clean -y && \
+rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 USER tivoli
 WORKDIR /home/tivoli
@@ -44,7 +46,8 @@ HOST_WIDTH=1366 \
 HOST_HEIGHT=768 \
 RTP_PORT_RANGE=10000-10200 \
 XDG_RUNTIME_DIR=/run/user/1000 \
-DISPLAY=:1
+DISPLAY=:1 \
+CODEC=h264
 
 # install chrome extensions
 COPY ./config/install-chrome-ext.sh /etc/tivoli-shared-desktop/install-chrome-ext.sh
@@ -58,13 +61,14 @@ sudo ./install-chrome-ext.sh "gbkeegbaiigmenfmjfclcdgdpimamgkj" "Office Editing 
 COPY \
 ./config/janus.jcfg \
 ./config/janus.plugin.streaming.jcfg \
-/etc/janus/
+/usr/local/etc/janus/
 
 # copy tivoli shared desktop config
 COPY \
 ./config/ecosystem.config.js \
 ./config/Caddyfile \
-./config/stream.sh \
+./config/stream-h264.sh \
+./config/stream-vp8.sh \
 ./config/tivoli-background.jpg \
 /etc/tivoli-shared-desktop/
 COPY ./app/ /etc/tivoli-shared-desktop/app/
