@@ -256,9 +256,10 @@ const startJanus = async streamEl => {
 
 	// initial query params
 
-	if (queryParams.hideControls) {
-		document.body.className = "hide-controls";
-	}
+	if (queryParams.hideControls) document.body.className = "hide-controls";
+	if (queryParams.grayscale) document.body.style.filter = "grayscale(1)";
+	if (queryParams.sepia) document.body.style.filter = "sepia(1)";
+	if (queryParams.invert) document.body.style.filter = "invert(1)";
 
 	// socket to node server for handling input
 
