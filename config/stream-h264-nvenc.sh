@@ -1,8 +1,8 @@
 gst-launch-1.0 \
   ximagesrc show-pointer=1 use-damage=0 ! \
     videoscale ! videorate ! videoconvert ! \
-    video/x-raw,width=1280,height=720,framerate=30/1 ! queue ! \
-      x264enc pass=cbr bitrate=4000 key-int-max=10 tune=zerolatency speed-preset=veryfast ! \
+    video/x-raw,width=1920,height=1080,framerate=30/1,format=NV12 ! queue ! \
+      nvh264enc bitrate=5000 rc-mode=cbr-ld-hq preset=low-latency-hq zerolatency=true ! \
       video/x-h264,profile=baseline ! queue ! \
         rtph264pay pt=96 config-interval=1 ! \
         udpsink host=127.0.0.1 port=5004 \
@@ -12,7 +12,5 @@ gst-launch-1.0 \
         rtpopuspay pt=111 ! \
         udpsink host=127.0.0.1 port=5002
 
-    # nvh264enc bitrate=4000 rc-mode=cbr preset=low-latency ! \
-      
-    # openh264enc multi-thread=4 complexity=low bitrate=4000000 max-bitrate=4500000 ! \
-      # capssetter caps="application/x-rtp,profile-level-id=(string)42e01f" ! \
+  # https://gstreamer.freedesktop.org/documentation/nvcodec/GstNvBaseEnc.html 
+  # https://gstreamer.freedesktop.org/documentation/nvcodec/nvh264enc.html

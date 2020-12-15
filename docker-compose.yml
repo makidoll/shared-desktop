@@ -3,6 +3,7 @@ services:
     tivoli-shared-desktop:
         image: tivolicloud/shared-desktop:latest
         # restart: always
+        # runtime: nvidia
         ports:
             - 8080:80/tcp
             - 10000-10199:10000-10199/udp
