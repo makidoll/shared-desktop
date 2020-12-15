@@ -1,9 +1,13 @@
 const fs = require("fs");
 
 const usingNvidia = fs.existsSync("/dev/nvidia0");
+if (usingNvidia) {
+	process.env.HOST_WIDTH = 1920;
+	process.env.HOST_HEIGHT = 1080;
+}
 
-const HOST_WIDTH = usingNvidia ? 1920 : process.env.HOST_WIDTH;
-const HOST_HEIGHT = usingNvidia ? 1080 : process.env.HOST_HEIGHT;
+const HOST_WIDTH = process.env.HOST_WIDTH;
+const HOST_HEIGHT = process.env.HOST_HEIGHT;
 
 const isArchLinux = fs.readFileSync("/etc/issue", "utf-8").startsWith("Arch");
 
