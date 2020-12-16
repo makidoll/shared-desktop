@@ -21,6 +21,18 @@ const xdotool = args => {
 	});
 };
 
+let streamEnabled = true;
+const setStreamEnabled = enable => {
+	if (streamEnabled == enable) return;
+	streamEnabled = enable;
+	console.log((enable ? "Enabling" : "Disabling") + " stream...");
+	spawn("pm2", [enable ? "start" : "stop", "Stream"], {
+		stdio: [0, "pipe", "pipe"],
+	});
+};
+
+setStreamEnabled(false);
+
 let users = 0;
 let controlsOwnerSocket = null;
 
@@ -30,6 +42,8 @@ const hasPassword =
 
 io.on("connection", socket => {
 	users++;
+
+	if (users > 0) setStreamEnabled(true);
 
 	const userPassword = socket.handshake.query.password;
 
@@ -71,9 +85,12 @@ io.on("connection", socket => {
 		if (controlsOwnerSocket == socket) {
 			controlsOwnerSocket = null;
 		}
+
 		users--;
 		emitter.off("updateInfoForAll", updateInfo);
 		updateInfoForAll();
+
+		if (users <= 0) setStreamEnabled(false);
 	});
 
 	updateInfoForAll();

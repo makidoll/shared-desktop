@@ -94,7 +94,8 @@ module.exports = {
 			],
 		},
 		{
-			name: "Stream " + codec,
+			name: "Stream",
+			kill_timeout: 1,
 			script: "su",
 			args: [
 				"tivoli",
