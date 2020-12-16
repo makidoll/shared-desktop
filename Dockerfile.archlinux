@@ -80,9 +80,9 @@ sudo rm -f /etc/machine-id /var/lib/dbus/machine-id && \
 sudo dbus-uuidgen --ensure=/etc/machine-id && \
 sudo dbus-uuidgen --ensure && \
 # make google chrome default
-sudo xdg-mime default google-chrome-stable.desktop x-scheme-handler/http && \
-sudo xdg-mime default google-chrome-stable.desktop x-scheme-handler/https && \
-sudo xdg-mime default google-chrome-stable.desktop text/html
+sudo xdg-mime default google-chrome.desktop x-scheme-handler/http && \
+sudo xdg-mime default google-chrome.desktop x-scheme-handler/https && \
+sudo xdg-mime default google-chrome.desktop text/html
 
 ENV \
 HOST_WIDTH=1366 \

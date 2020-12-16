@@ -4,6 +4,10 @@ services:
         image: tivolicloud/shared-desktop:latest
         # restart: always
         # runtime: nvidia
+        cap_add:
+            - SYS_ADMIN # necessary for chrome sandboxing
+        volumes:
+            - /dev/shm:/dev/shm # fixes memory crashes in chrome
         ports:
             - 8080:80/tcp
             - 10000-10199:10000-10199/udp

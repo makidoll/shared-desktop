@@ -79,17 +79,14 @@ module.exports = {
 				"-c",
 				"dbus-launch google-chrome-stable " +
 					[
-						"--window-position=0,0",
-						"--start-maximized",
 						"--no-first-run",
+						"--start-maximized", // doesnt work with --no-first-run
+						"--window-position=0,0",
+						// "--window-size=" + HOST_WIDTH + "," + HOST_HEIGHT,
 						"--bwsi", // browse without sign in
-						"--test-type",
-						// "--force-dark-mode",
-						"--disable-file-system",
-						"--disable-gpu",
-						"--disable-software-rasterizer",
-						"--disable-dev-shm-usage",
-						"--no-sandbox",
+						// "--incognito",
+						// "--disable-dev-shm-usage", // passed through compose yml
+						...(usingNvidia ? [] : ["--disable-gpu"]),
 					].join(" "),
 			],
 		},
