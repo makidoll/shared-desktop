@@ -108,7 +108,7 @@ class StreamInputController {
 	}
 }
 
-const startJanus = async streamEl => {
+const startJanus = async (streamEl, streamName) => {
 	await new Promise(callback => {
 		Janus.init({
 			// debug: "all",
@@ -156,13 +156,18 @@ const startJanus = async streamEl => {
 
 			if (list == null) return;
 			if (list.length <= 0) return;
-			const stream = list[0];
-			const id = stream.id;
+
+			const stream = list.find(item =>
+				item.description
+					.toLowerCase()
+					.includes(streamName.toLowerCase()),
+			);
+			if (stream == null) return;
 			// console.log("Found stream", stream);
 
 			await new Promise(success => {
 				streaming.send({
-					message: { request: "watch", id },
+					message: { request: "watch", id: stream.id },
 					success,
 				});
 			});
@@ -273,6 +278,7 @@ const startJanus = async streamEl => {
 	// make sure the stream is playing
 
 	const streamEl = document.getElementById("stream");
+	const streamAudioEl = document.getElementById("stream-audio");
 	const volumeSliderEl = document.getElementById("volume-slider");
 	const loadingEl = document.getElementById("loading");
 
@@ -281,16 +287,16 @@ const startJanus = async streamEl => {
 	});
 
 	volumeSliderEl.addEventListener("input", event => {
-		streamEl.volume = Number(volumeSliderEl.value);
+		streamAudioEl.volume = Number(volumeSliderEl.value);
 	});
 
 	if (queryParams.volume != null) {
 		const volume = Number(queryParams.volume);
 		if (volume >= 0 && volume <= 1) {
-			streamEl.volume = volumeSliderEl.value = volume;
+			streamAudioEl.volume = volumeSliderEl.value = volume;
 		}
 	} else {
-		streamEl.volume = volumeSliderEl.value = 0.7; // default volume
+		streamAudioEl.volume = volumeSliderEl.value = 0.7; // default volume
 	}
 
 	streamEl.addEventListener("playing", () => {
@@ -301,6 +307,11 @@ const startJanus = async streamEl => {
 		if (streamEl.paused) {
 			try {
 				streamEl.play();
+			} catch (err) {}
+		}
+		if (streamAudioEl.paused) {
+			try {
+				streamAudioEl.play();
 			} catch (err) {}
 		}
 	}, 500);
@@ -357,13 +368,15 @@ const startJanus = async streamEl => {
 	// janus video stuff
 
 	if (window.qt) {
-		startJanus(streamEl);
+		startJanus(streamEl, "video");
+		startJanus(streamAudioEl, "audio");
 	} else {
 		const getUserInputEl = document.getElementById("get-user-input");
 		getUserInputEl.style.display = "flex";
 		getUserInputEl.addEventListener("click", e => {
 			getUserInputEl.parentNode.removeChild(getUserInputEl);
-			startJanus(streamEl);
+			startJanus(streamEl, "video");
+			startJanus(streamAudioEl, "audio");
 		});
 	}
 
