@@ -1,4 +1,5 @@
 :80 {
     reverse_proxy /* http://127.0.0.1:3000
-    reverse_proxy /janus* http://127.0.0.1:8088 
+    # reverse_proxy /janus* http://127.0.0.1:8088 # http
+    reverse_proxy /janus* http://127.0.0.1:8188 # ws
 }

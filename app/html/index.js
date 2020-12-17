@@ -108,27 +108,32 @@ class StreamInputController {
 	}
 }
 
-const startJanus = async (streamEl, streamName) => {
-	await new Promise(callback => {
-		Janus.init({
-			// debug: "all",
-			callback,
+let janusInitialized = false;
+
+const startJanus = async (streamEl, streamName, destroyedCallback) => {
+	if (!janusInitialized) {
+		await new Promise(callback => {
+			Janus.init({
+				// debug: "all",
+				callback,
+			});
 		});
-	});
+		janusInitialized = true;
+	}
 
 	if (!Janus.isWebrtcSupported()) {
 		alert("WebRTC not supported");
 		return;
 	}
 
+	const janusServer =
+		(window.location.protocol.startsWith("https") ? "wss://" : "ws://") +
+		window.location.host +
+		"/janus";
+
 	const janus = await new Promise((resolve, reject) => {
 		const janus = new Janus({
-			server: [
-				// "http://" + window.location.hostname + ":8088/janus",
-				// "ws://" + window.location.hostname + ":8188/janus",
-				// through proxy
-				"/janus",
-			],
+			server: janusServer,
 			success() {
 				resolve(janus);
 			},
@@ -177,6 +182,11 @@ const startJanus = async (streamEl, streamName) => {
 		},
 		iceState(state) {
 			// console.log("ICE state changed to", state);
+			if (state == "disconnected") {
+				streaming.detach();
+				janus.destroy();
+				if (destroyedCallback) destroyedCallback();
+			}
 		},
 		webrtcState(on) {
 			// console.log("WebRTC PeerConnection up", on);
@@ -367,16 +377,43 @@ const startJanus = async (streamEl, streamName) => {
 
 	// janus video stuff
 
+	const playing = {
+		video: false,
+		audio: false,
+	};
+
+	const preStartJanus = () => {
+		const check = (el, streamName) => {
+			if (!playing[streamName]) {
+				startJanus(el, streamName, () => {
+					playing[streamName] = false;
+				})
+					.then(() => {
+						playing[streamName] = true;
+					})
+					.catch(error => {
+						console.error(error);
+					});
+			}
+		};
+
+		check(streamEl, "video");
+		check(streamAudioEl, "audio");
+
+		setInterval(() => {
+			check(streamEl, "video");
+			check(streamAudioEl, "audio");
+		}, 1000 * 5);
+	};
+
 	if (window.qt) {
-		startJanus(streamEl, "video");
-		startJanus(streamAudioEl, "audio");
+		preStartJanus();
 	} else {
 		const getUserInputEl = document.getElementById("get-user-input");
 		getUserInputEl.style.display = "flex";
 		getUserInputEl.addEventListener("click", e => {
 			getUserInputEl.parentNode.removeChild(getUserInputEl);
-			startJanus(streamEl, "video");
-			startJanus(streamAudioEl, "audio");
+			preStartJanus();
 		});
 	}
 

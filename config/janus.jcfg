@@ -59,6 +59,6 @@ transports: {
 
     # disable = "libjanus_http.so,libjanus_mqtt.so,libjanus_nanomsg.so,libjanus_pfunix.so,libjanus_rabbitmq.so,libjanus_websockets.so"
     
-	# enable http
-	disable = "libjanus_mqtt.so,libjanus_nanomsg.so,libjanus_pfunix.so,libjanus_rabbitmq.so,libjanus_websockets.so"
+	# enable ws
+	disable = "libjanus_http.so,libjanus_mqtt.so,libjanus_nanomsg.so,libjanus_pfunix.so,libjanus_rabbitmq.so"
 }
