@@ -31,7 +31,9 @@ xf86-video-vesa mesa xorg-server-xvfb xdotool dbus pulseaudio \
 ttf-roboto openbox google-chrome xdg-utils xterm feh \
 # install gstreamer
 gstreamer gst-plugins-base gst-plugins-good gst-plugins-ugly gst-plugins-bad \
-# install all other 
+# install ffmpeg
+# ffmpeg \
+# install other 
 nodejs npm caddy-bin && \
 # install pm2
 sudo npm i -g pm2 && \
