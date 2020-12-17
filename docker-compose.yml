@@ -17,3 +17,5 @@ services:
             - CODEC=h264 # or vp8 (not recommended)
             - PASSWORD= # empty means no password (set with ?password=)
             - ALLOW_STEAL=true # allows stealing each other's controls
+            - DESKTOP_RES=1366x768
+            - STREAM_RES=1280x720

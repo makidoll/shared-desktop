@@ -8,8 +8,10 @@ const mitt = require("mitt");
 
 const boolEnv = str => str != null && str != "false" && str != "0" && str != "";
 
-const HOST_WIDTH = process.env.HOST_WIDTH;
-const HOST_HEIGHT = process.env.HOST_HEIGHT;
+const DESKTOP_RES = process.env.DESKTOP_RES;
+const DESKTOP_WIDTH = DESKTOP_RES.split("x")[0];
+const DESKTOP_HEIGHT = DESKTOP_RES.split("x")[1];
+
 const PASSWORD = process.env.PASSWORD;
 const ALLOW_STEAL = boolEnv(process.env.ALLOW_STEAL);
 
@@ -100,7 +102,11 @@ io.on("connection", socket => {
 		if (coords.length != 2) return;
 		if (typeof coords[0] != "number") return;
 		if (typeof coords[1] != "number") return;
-		xdotool(["mousemove", coords[0] * HOST_WIDTH, coords[1] * HOST_HEIGHT]);
+		xdotool([
+			"mousemove",
+			coords[0] * DESKTOP_WIDTH,
+			coords[1] * DESKTOP_HEIGHT,
+		]);
 	});
 	socket.on("mousedown", button => {
 		if (controlsOwnerSocket != socket) return;

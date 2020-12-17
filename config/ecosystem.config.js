@@ -1,13 +1,13 @@
 const fs = require("fs");
 
 const usingNvidia = fs.existsSync("/dev/nvidia0");
-if (usingNvidia) {
-	process.env.HOST_WIDTH = 1920;
-	process.env.HOST_HEIGHT = 1080;
-}
 
-const HOST_WIDTH = process.env.HOST_WIDTH;
-const HOST_HEIGHT = process.env.HOST_HEIGHT;
+const DESKTOP_RES = process.env.DESKTOP_RES;
+const STREAM_RES = process.env.STREAM_RES;
+
+// for passing on to stream scripts
+process.env.STREAM_WIDTH = STREAM_RES.split("x")[0];
+process.env.STREAM_HEIGHT = STREAM_RES.split("x")[1];
 
 const isArchLinux = fs.readFileSync("/etc/issue", "utf-8").startsWith("Arch");
 
@@ -36,12 +36,7 @@ module.exports = {
 		{
 			name: "Xvfb",
 			script: "/usr/bin/Xvfb",
-			args: [
-				":1",
-				"-screen",
-				"0",
-				HOST_WIDTH + "x" + HOST_HEIGHT + "x24",
-			],
+			args: [":1", "-screen", "0", DESKTOP_RES + "x24"],
 		},
 		{
 			name: "Dbus",
@@ -82,7 +77,7 @@ module.exports = {
 						"--no-first-run",
 						"--start-maximized", // doesnt work with --no-first-run
 						"--window-position=0,0",
-						// "--window-size=" + HOST_WIDTH + "," + HOST_HEIGHT,
+						// "--window-size=" + DESKTOP_RES.replace("x", ","),
 						"--bwsi", // browse without sign in
 						// "--incognito",
 						// "--disable-dev-shm-usage", // passed through compose yml

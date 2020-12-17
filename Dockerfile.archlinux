@@ -90,8 +90,8 @@ sudo xdg-mime default google-chrome.desktop x-scheme-handler/https && \
 sudo xdg-mime default google-chrome.desktop text/html
 
 ENV \
-HOST_WIDTH=1366 \
-HOST_HEIGHT=768 \
+DESKTOP_RES=1366x768 \
+STREAM_RES=1280x720 \
 RTP_PORT_RANGE=10000-10200 \
 XDG_RUNTIME_DIR=/run/user/1000 \
 DISPLAY=:1 \

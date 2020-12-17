@@ -1,7 +1,7 @@
 gst-launch-1.0 \
   ximagesrc show-pointer=1 use-damage=0 ! \
     videoscale ! videorate ! videoconvert ! \
-    video/x-raw,width=1280,height=720,framerate=30/1 ! queue ! \
+    video/x-raw,width=$STREAM_WIDTH,height=$STREAM_HEIGHT,framerate=30/1 ! queue ! \
       x264enc pass=cbr bitrate=4000 key-int-max=10 tune=zerolatency speed-preset=veryfast ! \
       video/x-h264,profile=baseline ! queue ! \
         rtph264pay pt=96 config-interval=1 ! \
