@@ -72,6 +72,9 @@ chmod +x .config/openbox/autostart && \
 sudo bash -c "echo 'DISPLAY=:1' >> /etc/environment" && \
 sudo bash -c "echo 'XDG_RUNTIME_DIR=/run/user/1000' >> /etc/environment" && \
 sudo mkdir -p /var/run/dbus && \
+# dns
+sudo bash -c "echo 'nameserver 1.1.1.1' > /etc/resolv.conf" && \
+sudo bash -c "echo 'nameserver 1.0.0.1' >> /etc/resolv.conf" && \
 # user
 sudo mkdir -p /run/user/1000 && \
 sudo chown tivoli:tivoli /run/user/1000 && \
