@@ -61,7 +61,8 @@ class StreamInputController {
 		this.streamEl.addEventListener("mouseup", this.mouseup);
 		this.streamEl.addEventListener("wheel", this.wheel);
 
-		if (navigator.clipboard.readText) navigator.clipboard.readText(); // request permission
+		if (navigator.clipboard && navigator.clipboard.readText)
+			navigator.clipboard.readText(); // request permission
 
 		this.guacamoleKeyboard.onkeydown = keysym => {
 			this.keysDown[keysym] = true;
@@ -70,7 +71,7 @@ class StreamInputController {
 				this.keysDown[65507] && // CTRL
 				keysym == 118 // V
 			) {
-				if (navigator.clipboard.readText)
+				if (navigator.clipboard && navigator.clipboard.readText)
 					navigator.clipboard
 						.readText()
 						.then(text => {
