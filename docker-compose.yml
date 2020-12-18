@@ -19,3 +19,4 @@ services:
             - ALLOW_STEAL=true # allows stealing each other's controls
             - DESKTOP_RES=1366x768
             - STREAM_RES=1280x720
+            - STREAM_BITRATE=4000 # 5000 for 1080p
