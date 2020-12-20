@@ -1,0 +1,18 @@
+{
+	"Entities": [
+		{
+			"type": "Web",
+			"name": "Shared Desktop",
+			"userData": "{\"intensity\":3}",
+			"dimensions": {
+				"x": 3.2,
+				"y": 1.935,
+				"z": 0.01
+			},
+			"script": "./dynamicLights.js",
+			"sourceUrl": "https://shared-desktop.tivolicloud.com?dynamicLights&volume=0",
+			"dpi": 10,
+			"inputMode": "mouse"
+		}
+	]
+}
