@@ -10,7 +10,7 @@
 				"z": 0.01
 			},
 			"script": "./dynamicLights.js",
-			"sourceUrl": "https://shared-desktop.tivolicloud.com?dynamicLights&volume=0",
+			"sourceUrl": "https://shared-desktop.tivolicloud.com?dynamicLights",
 			"dpi": 10,
 			"inputMode": "mouse"
 		}
