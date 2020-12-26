@@ -3,7 +3,8 @@ services:
     tivoli-shared-desktop:
         image: tivolicloud/shared-desktop:latest
         # restart: always
-        # runtime: nvidia
+        # runtime: nvidia # enable for nvidia encoding
+        # devices: [/dev/dri/renderD128:/dev/dri/renderD128] # enable for vaapi encoding (amd or intel quicksync)
         cap_add:
             - SYS_ADMIN # necessary for chrome sandboxing
         volumes:

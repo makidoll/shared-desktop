@@ -1,6 +1,7 @@
 const fs = require("fs");
 
 const usingNvidia = fs.existsSync("/dev/nvidia0");
+const usingVaapi = fs.existsSync("/dev/dri/renderD128");
 
 const DESKTOP_RES = process.env.DESKTOP_RES;
 const STREAM_RES = process.env.STREAM_RES;
@@ -81,7 +82,7 @@ module.exports = {
 						"--bwsi", // browse without sign in
 						// "--incognito",
 						// "--disable-dev-shm-usage", // passed through compose yml
-						...(usingNvidia ? [] : ["--disable-gpu"]),
+						...(usingNvidia || usingVaapi ? [] : ["--disable-gpu"]),
 					].join(" "),
 			],
 		},
@@ -94,6 +95,8 @@ module.exports = {
 				"-c",
 				...(usingNvidia
 					? ["/etc/tivoli-shared-desktop/stream-h264-nvenc.sh"]
+					: usingVaapi
+					? ["/etc/tivoli-shared-desktop/stream-h264-vaapi.sh"]
 					: ["/etc/tivoli-shared-desktop/stream-" + codec + ".sh"]),
 			],
 		},
