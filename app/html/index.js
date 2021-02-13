@@ -69,7 +69,7 @@ class StreamInputController {
 
 			if (
 				this.keysDown[65507] && // CTRL
-				keysym == 118 // V
+				(keysym == 118 || keysym == 86) // v or V
 			) {
 				if (navigator.clipboard && navigator.clipboard.readText)
 					navigator.clipboard
