@@ -74,8 +74,6 @@ const janusConfigPath = janusPrefix + "/etc/janus";
 				`disable = "${disabledTransports.join(",")}"`,
 			),
 	);
-
-	console.log(fs.readFileSync(configPath, "utf8"));
 }
 
 // get public ip if necessary
