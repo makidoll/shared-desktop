@@ -17,25 +17,66 @@ const isArchLinux = fs.readFileSync("/etc/issue", "utf-8").startsWith("Arch");
 const codec = (process.env.CODEC || "").toLowerCase() || "h264";
 if (codec != "h264" && codec != "vp8") return;
 
-// update janus config for correct codec
+// update janus config
 
-const configPath =
-	(isArchLinux ? "" : "/usr/local") +
-	"/etc/janus/janus.plugin.streaming.jcfg";
+const janusPrefix = isArchLinux ? "" : "/usr/local"; // arch not fully tested
+const janusConfigPath = janusPrefix + "/etc/janus";
 
-const config = fs.readFileSync(configPath, "utf8");
-const codecConfig = config.match(
-	new RegExp("#ifdef " + codec + "([^]+?)#endif", "i"),
-);
-fs.writeFileSync(
-	configPath,
-	config
-		.replace(codecConfig[0], codecConfig[1].replace(/# /g, "").trim())
-		.split("\n")
-		.map(line => (line.trim().startsWith("#") ? null : line))
-		.filter(line => line != null)
-		.join("\n"),
-);
+{
+	// update janus streaming config to use correct codec
+
+	const configPath = janusConfigPath + "/janus.plugin.streaming.jcfg";
+	const config = fs.readFileSync(configPath, "utf8");
+	const codecConfig = config.match(
+		new RegExp("#ifdef " + codec + "([^]+?)#endif", "i"),
+	);
+	fs.writeFileSync(
+		configPath,
+		config
+			.replace(codecConfig[0], codecConfig[1].replace(/# /g, "").trim())
+			.split("\n")
+			.map(line => (line.trim().startsWith("#") ? null : line))
+			.filter(line => line != null)
+			.join("\n"),
+	);
+}
+
+{
+	// update janus config to disable everything but what we need
+
+	const configPath = janusConfigPath + "/janus.jcfg";
+	const config = fs.readFileSync(configPath, "utf8");
+
+	const plugins = fs.readdirSync(janusPrefix + "/lib/janus/plugins");
+	const transports = fs.readdirSync(janusPrefix + "/lib/janus/transports");
+
+	const enabledPlugins = ["libjanus_streaming.so"];
+	const enabledTransports = ["libjanus_websockets.so"];
+
+	// filter out .so.0.0.0 and such, keep only .so's
+
+	const disabledPlugins = plugins.filter(
+		name => name.endsWith(".so") && !enabledPlugins.includes(name),
+	);
+	const disabledTransports = transports.filter(
+		name => name.endsWith(".so") && !enabledTransports.includes(name),
+	);
+
+	fs.writeFileSync(
+		configPath,
+		config
+			.replace(
+				/# \[plugins\]/i,
+				`disable = "${disabledPlugins.join(",")}"`,
+			)
+			.replace(
+				/# \[transports\]/i,
+				`disable = "${disabledTransports.join(",")}"`,
+			),
+	);
+
+	console.log(fs.readFileSync(configPath, "utf8"));
+}
 
 // get public ip if necessary
 
