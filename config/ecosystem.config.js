@@ -1,4 +1,5 @@
 const fs = require("fs");
+const child_process = require("child_process");
 
 const usingNvidia = fs.existsSync("/dev/nvidia0");
 const usingVaapi = fs.existsSync("/dev/dri/renderD128");
@@ -7,6 +8,7 @@ const DESKTOP_RES = process.env.DESKTOP_RES;
 const STREAM_RES = process.env.STREAM_RES;
 
 // for passing on to stream scripts
+
 process.env.STREAM_WIDTH = STREAM_RES.split("x")[0];
 process.env.STREAM_HEIGHT = STREAM_RES.split("x")[1];
 
@@ -34,6 +36,15 @@ fs.writeFileSync(
 		.filter(line => line != null)
 		.join("\n"),
 );
+
+// get public ip if necessary
+
+if (process.env.PUBLIC_IP == "getmypublicip") {
+	process.env.PUBLIC_IP = child_process
+		.execSync("curl http://api.ipify.org")
+		.toString();
+	console.log("My public IP is: " + process.env.PUBLIC_IP);
+}
 
 module.exports = {
 	apps: [
@@ -107,8 +118,8 @@ module.exports = {
 			name: "Janus",
 			script: isArchLinux ? "/usr/sbin/janus" : "/usr/local/bin/janus",
 			args: [
-				...(process.env.DOCKER_IP
-					? ["--nat-1-1", process.env.DOCKER_IP]
+				...(process.env.PUBLIC_IP
+					? ["--nat-1-1", process.env.PUBLIC_IP]
 					: []),
 				"-S",
 				"stun.l.google.com:19302",

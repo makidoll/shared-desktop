@@ -14,7 +14,7 @@ services:
             - 10000-10199:10000-10199/udp
         environment:
             - RTP_PORT_RANGE=10000-10199
-            - DOCKER_IP=172.17.0.1 # public ip or `ip addr | grep docker`
+            - PUBLIC_IP=getmypublicip # set to `getmypublicip` or specify manually
             - CODEC=h264 # or vp8 (not recommended)
             - PASSWORD= # empty means no password (set with ?password=)
             - ALLOW_STEAL=true # allows stealing each other's controls
