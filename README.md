@@ -12,7 +12,7 @@ On any shared desktop page you can use these query paramaters:
 -   `hideControls`
 -   `password=[password]` Used with `PASSWORD` environment variable
 
-To be used with [this client entity script](https://hifi.maki.cafe/client-entity-scripts/cinematheque/dynamicLightsAndVolumeSliderOnWebEntity.js)
+To be used with [this client entity script](https://shared-desktop.tivolicloud.com/dynamicLights.js)
 
 -   `dynamicLights`
 

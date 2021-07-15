@@ -44,7 +44,7 @@ sudo rm -rf /var/cache/pacman/* ~/.cache
 COPY ./config/install-chrome-ext.sh /etc/tivoli-shared-desktop/install-chrome-ext.sh
 RUN cd /etc/tivoli-shared-desktop && \ 
 sudo ./install-chrome-ext.sh "cjpalhdlnbpafiamejdnhcphjbkeiagm" "uBlock Origin" && \
-sudo ./install-chrome-ext.sh "gphhapmejobijbbhgpjhcjognlahblep" "GNOME Shell integration" && \
+# sudo ./install-chrome-ext.sh "gphhapmejobijbbhgpjhcjognlahblep" "GNOME Shell integration" && \
 sudo ./install-chrome-ext.sh "ghbmnnjooekpmoecnnnilnnbdlolhkhi" "Google Docs Offline" && \
 sudo ./install-chrome-ext.sh "gbkeegbaiigmenfmjfclcdgdpimamgkj" "Office Editing for Docs, Sheets & Slides"
 

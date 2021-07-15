@@ -1,1 +1,1 @@
-docker build -f Dockerfile.archlinux -t tivolicloud/shared-desktop .
+docker build -f Dockerfile.debian -t tivolicloud/shared-desktop .

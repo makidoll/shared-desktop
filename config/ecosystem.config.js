@@ -17,7 +17,10 @@ if (codec != "h264" && codec != "vp8") return;
 
 // update janus config for correct codec
 
-const configPath = "/etc/janus/janus.plugin.streaming.jcfg";
+const configPath =
+	(isArchLinux ? "" : "/usr/local") +
+	"/etc/janus/janus.plugin.streaming.jcfg";
+
 const config = fs.readFileSync(configPath, "utf8");
 const codecConfig = config.match(
 	new RegExp("#ifdef " + codec + "([^]+?)#endif", "i"),
