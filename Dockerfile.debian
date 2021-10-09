@@ -18,7 +18,7 @@ gstreamer1.0-tools gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
 gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
 gstreamer1.0-pulseaudio gstreamer1.0-vaapi && \
 # install nodejs and pm2
-curl -o nodejs.sh -L https://deb.nodesource.com/setup_14.x && \
+curl -o nodejs.sh -L https://deb.nodesource.com/setup_lts.x && \
 bash nodejs.sh && \
 rm -f nodejs.sh && \
 apt-get install -y nodejs && \
