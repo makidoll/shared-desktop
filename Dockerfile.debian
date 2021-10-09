@@ -1,7 +1,7 @@
 # FROM debian:bullseye-slim
 # https://github.com/canyanio/janus-gateway-docker
 # https://hub.docker.com/r/canyan/janus-gateway
-FROM canyan/janus-gateway:0.10.7
+FROM canyan/janus-gateway:master_40f1ac66e95e1eed4bc91548e7187a1bb3ef3bd8
 
 ENV DEBIAN_FRONTEND=noninteractive 
 
