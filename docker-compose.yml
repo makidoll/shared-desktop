@@ -9,6 +9,9 @@ services:
             - SYS_ADMIN # necessary for chrome sandboxing
         volumes:
             - /dev/shm:/dev/shm # fixes memory crashes in chrome
+        dns: # use cloudflare dns to block bad things
+            - "1.1.1.3"
+            - "1.0.0.3"
         ports:
             - 8080:80/tcp
             - 10000-10199:10000-10199/udp
