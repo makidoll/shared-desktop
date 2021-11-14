@@ -32,4 +32,4 @@ Install Docker and Docker Compose and run:
 docker-compose up
 ```
 
-It will create an image around 5.3 GB
+It will create an image around 5.3 GB and be available on http://127.0.0.1:8080
