@@ -1265,9 +1265,6 @@ Guacamole.Keyboard = function Keyboard(element) {
 				// Only intercept if handler set
 				if (!guac_keyboard.onkeydown) return;
 
-				// ADDED BY MAKI
-				if (e.repeat) return;
-
 				// Ignore events which have already been handled
 				if (!markEvent(e)) return;
 
@@ -1304,9 +1301,6 @@ Guacamole.Keyboard = function Keyboard(element) {
 				// Only intercept if handler set
 				if (!guac_keyboard.onkeydown && !guac_keyboard.onkeyup) return;
 
-				// ADDED BY MAKI
-				if (e.repeat) return;
-
 				// Ignore events which have already been handled
 				if (!markEvent(e)) return;
 
@@ -1333,9 +1327,6 @@ Guacamole.Keyboard = function Keyboard(element) {
 			function (e) {
 				// Only intercept if handler set
 				if (!guac_keyboard.onkeyup) return;
-
-				// ADDED BY MAKI
-				if (e.repeat) return;
 
 				// Ignore events which have already been handled
 				if (!markEvent(e)) return;
