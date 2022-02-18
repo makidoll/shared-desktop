@@ -827,13 +827,14 @@ Guacamole.Keyboard = function Keyboard(element) {
 				window.clearInterval(key_repeat_interval);
 
 				// Repeat after a delay as long as pressed
-				if (!no_repeat[keysym])
-					key_repeat_timeout = window.setTimeout(function () {
-						key_repeat_interval = window.setInterval(function () {
-							guac_keyboard.onkeyup(keysym);
-							guac_keyboard.onkeydown(keysym);
-						}, 50);
-					}, 500);
+				// MAKI: DISABLE BECAUSE WE'RE MIRRORING THIS TO THE SERVER
+				// if (!no_repeat[keysym])
+				// 	key_repeat_timeout = window.setTimeout(function () {
+				// 		key_repeat_interval = window.setInterval(function () {
+				// 			guac_keyboard.onkeyup(keysym);
+				// 			guac_keyboard.onkeydown(keysym);
+				// 		}, 50);
+				// 	}, 500);
 
 				return result;
 			}

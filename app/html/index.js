@@ -65,7 +65,6 @@ class StreamInputController {
 			navigator.clipboard.readText(); // request permission
 
 		this.guacamoleKeyboard.onkeydown = keysym => {
-			if (this.keysDown[keysym]) return; // dont repeat
 			this.keysDown[keysym] = true;
 
 			if (
