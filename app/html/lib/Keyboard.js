@@ -1268,6 +1268,9 @@ Guacamole.Keyboard = function Keyboard(element) {
 				// Ignore events which have already been handled
 				if (!markEvent(e)) return;
 
+				// ADDED BY MAKI
+				if (e.repeat) return;
+
 				var keyCode;
 				if (window.event) keyCode = window.event.keyCode;
 				else if (e.which) keyCode = e.which;
@@ -1330,6 +1333,9 @@ Guacamole.Keyboard = function Keyboard(element) {
 
 				// Ignore events which have already been handled
 				if (!markEvent(e)) return;
+
+				// ADDED BY MAKI
+				if (e.repeat) return;
 
 				e.preventDefault();
 
