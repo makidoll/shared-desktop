@@ -101,7 +101,7 @@ module.exports = {
 			name: "Pulseaudio",
 			script: "su",
 			args: [
-				"tivoli",
+				"maki",
 				"-c",
 				"dbus-launch pulseaudio --disallow-module-loading --disallow-exit --exit-idle-time=-1",
 			],
@@ -110,7 +110,7 @@ module.exports = {
 		// 	name: "Gnome",
 		// 	script: "su",
 		// 	args: [
-		// 		"tivoli",
+		// 		"maki",
 		// 		"-c",
 		// 		"dbus-launch gnome-session",
 		// 	],
@@ -118,13 +118,13 @@ module.exports = {
 		{
 			name: "Openbox",
 			script: "su",
-			args: ["tivoli", "-c", "dbus-launch openbox-session"],
+			args: ["maki", "-c", "dbus-launch openbox-session"],
 		},
 		{
 			name: "Google Chrome",
 			script: "su",
 			args: [
-				"tivoli",
+				"maki",
 				"-c",
 				"dbus-launch google-chrome-stable " +
 					[
@@ -144,13 +144,13 @@ module.exports = {
 			kill_timeout: 1,
 			script: "su",
 			args: [
-				"tivoli",
+				"maki",
 				"-c",
 				...(usingNvidia
-					? ["/etc/tivoli-shared-desktop/stream-h264-nvenc.sh"]
+					? ["/etc/shared-desktop/stream-h264-nvenc.sh"]
 					: usingVaapi
-					? ["/etc/tivoli-shared-desktop/stream-h264-vaapi.sh"]
-					: ["/etc/tivoli-shared-desktop/stream-" + codec + ".sh"]),
+					? ["/etc/shared-desktop/stream-h264-vaapi.sh"]
+					: ["/etc/shared-desktop/stream-" + codec + ".sh"]),
 			],
 		},
 		{
@@ -168,12 +168,12 @@ module.exports = {
 		},
 		{
 			name: "App",
-			script: "/etc/tivoli-shared-desktop/app/app.js",
+			script: "/etc/shared-desktop/app/app.js",
 		},
 		{
 			name: "Caddy",
 			script: isArchLinux ? "/usr/sbin/caddy" : "/usr/bin/caddy",
-			args: ["run", "-config", "/etc/tivoli-shared-desktop/Caddyfile"],
+			args: ["run", "-config", "/etc/shared-desktop/Caddyfile"],
 		},
 	],
 };

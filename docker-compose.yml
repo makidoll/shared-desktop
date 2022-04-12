@@ -1,10 +1,43 @@
-version: "3.6"
+version: "3.8"
+# if you want to use vlan
+# networks:
+#     docker-isolated:
+#         driver: macvlan
+#         driver_opts:
+#             parent: enp60s0.420
+#         ipam:
+#             config:
+#                 - subnet: 4.20.0.0/24
 services:
-    tivoli-shared-desktop:
-        image: tivolicloud/shared-desktop:latest
-        # restart: always
-        # runtime: nvidia # enable for nvidia encoding
-        # devices: [/dev/dri/renderD128:/dev/dri/renderD128] # enable for vaapi encoding (amd or intel quicksync)
+    shared-desktop:
+        image: maki/shared-desktop:latest
+        restart: always
+
+        # if you want to use vlan
+        # hostname: shared-desktop
+        # networks:
+        #     docker-isolated:
+        #         ipv4_address: 4.20.0.2
+
+        # for nvidia
+        # runtime: nvidia # this is old, use deploy and devices
+        # deploy:
+        #     resources:
+        #         reservations:
+        #             devices:
+        #                 - driver: nvidia
+        #                   count: 1
+        #                   capabilities: [gpu]
+        # devices:
+        #     - /dev/nvidia0:/dev/nvidia0
+        #     - /dev/nvidiactl:/dev/nvidiactl
+        #     - /dev/nvidia-modeset:/dev/nvidia-modeset
+        #     - /dev/nvidia-uvm:/dev/nvidia-uvm
+        #     - /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools
+
+        # for amd/intel quicksync (vaapi)
+        # devices: [/dev/dri/renderD128:/dev/dri/renderD128]
+
         cap_add:
             - SYS_ADMIN # necessary for chrome sandboxing
         volumes:
@@ -12,7 +45,7 @@ services:
         dns: # use cloudflare dns to block bad things
             - "1.1.1.3"
             - "1.0.0.3"
-        ports:
+        ports: # disable if using vlan network
             - 8080:80/tcp
             - 10000-10199:10000-10199/udp
         environment:
@@ -22,5 +55,5 @@ services:
             - PASSWORD= # empty means no password (set with ?password=)
             - ALLOW_STEAL=true # allows stealing each other's controls
             - DESKTOP_RES=1366x768
-            - STREAM_RES=1280x720
+            - STREAM_RES=1366x768
             - STREAM_BITRATE=4000 # 5000 for 1080p

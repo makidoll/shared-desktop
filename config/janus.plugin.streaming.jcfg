@@ -1,7 +1,7 @@
-tivoli-shared-desktop-video: {
+shared-desktop-video: {
   type = "rtp"
   id = 1
-  description = "Tivoli Shared Desktop Video"
+  description = "Shared Desktop Video"
   
   video = true
   videoport = 5004
@@ -18,10 +18,10 @@ tivoli-shared-desktop-video: {
   #endif
 }
 
-tivoli-shared-desktop-audio: {
+shared-desktop-audio: {
   type = "rtp"
   id = 2
-  description = "Tivoli Shared Desktop Audio"
+  description = "Shared Desktop Audio"
   
   audio = true
   audioport = 5002

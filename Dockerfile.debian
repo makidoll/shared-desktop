@@ -30,21 +30,21 @@ chmod +x /usr/bin/caddy && \
 curl -OL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
 apt-get install -y ./google-chrome-stable_current_amd64.deb && \
 rm -f google-chrome-stable_current_amd64.deb && \
-# create tivoli sudo user without password
-useradd -m tivoli && usermod -L tivoli && \
-echo "tivoli ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+# create maki sudo user without password
+useradd -m maki && usermod -L maki && \
+echo "maki ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
 echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-chsh tivoli -s /bin/bash
+chsh maki -s /bin/bash
 # # cleanup (lets not so that users can still use apt)
 # apt-get clean -y && \
 # rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-USER tivoli
-WORKDIR /home/tivoli
+USER maki
+WORKDIR /home/maki
 
 # install chrome extensions
-COPY ./config/install-chrome-ext.sh /etc/tivoli-shared-desktop/install-chrome-ext.sh
-RUN cd /etc/tivoli-shared-desktop && \ 
+COPY ./config/install-chrome-ext.sh /etc/shared-desktop/install-chrome-ext.sh
+RUN cd /etc/shared-desktop && \ 
 sudo ./install-chrome-ext.sh "cjpalhdlnbpafiamejdnhcphjbkeiagm" "uBlock Origin" && \
 # sudo ./install-chrome-ext.sh "gphhapmejobijbbhgpjhcjognlahblep" "GNOME Shell integration" && \
 sudo ./install-chrome-ext.sh "ghbmnnjooekpmoecnnnilnnbdlolhkhi" "Google Docs Offline" && \
@@ -56,7 +56,7 @@ COPY \
 ./config/janus.plugin.streaming.jcfg \
 /usr/local/etc/janus/
 
-# copy tivoli shared desktop config
+# copy maki shared desktop config
 COPY \
 ./config/ecosystem.config.js \
 ./config/Caddyfile \
@@ -64,25 +64,22 @@ COPY \
 ./config/stream-h264-vaapi.sh \
 ./config/stream-h264.sh \
 ./config/stream-vp8.sh \
-./config/tivoli-background.jpg \
-/etc/tivoli-shared-desktop/
-COPY ./app/ /etc/tivoli-shared-desktop/app/
+./config/background.jpg \
+/etc/shared-desktop/
+COPY ./app/ /etc/shared-desktop/app/
 
 RUN \
 # set background
 mkdir -p .config/openbox && \
-echo "feh --bg-fill /etc/tivoli-shared-desktop/tivoli-background.jpg" > .config/openbox/autostart && \
+echo "feh --bg-fill /etc/shared-desktop/background.jpg" > .config/openbox/autostart && \
 chmod +x .config/openbox/autostart && \
 # vars
 sudo bash -c "echo 'DISPLAY=:1' >> /etc/environment" && \
 sudo bash -c "echo 'XDG_RUNTIME_DIR=/run/user/1000' >> /etc/environment" && \
 sudo mkdir -p /var/run/dbus && \
-# dns
-sudo bash -c "echo 'nameserver 1.1.1.1' > /etc/resolv.conf" && \
-sudo bash -c "echo 'nameserver 1.0.0.1' >> /etc/resolv.conf" && \
 # user
 sudo mkdir -p /run/user/1000 && \
-sudo chown tivoli:tivoli /run/user/1000 && \
+sudo chown maki:maki /run/user/1000 && \
 # machine id
 sudo rm -f /etc/machine-id /var/lib/dbus/machine-id && \
 sudo dbus-uuidgen --ensure=/etc/machine-id && \
@@ -104,5 +101,5 @@ NVIDIA_VISIBLE_DEVICES=all \
 NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
 
 # run config with pm2
-RUN cd /etc/tivoli-shared-desktop/app && sudo npm install --no-save
-CMD sudo -E pm2-runtime start /etc/tivoli-shared-desktop/ecosystem.config.js
+RUN cd /etc/shared-desktop/app && sudo npm install --no-save
+CMD sudo -E pm2-runtime start /etc/shared-desktop/ecosystem.config.js
